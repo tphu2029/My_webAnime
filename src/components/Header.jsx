@@ -106,7 +106,7 @@ function Header() {
 
   return (
     <>
-      <header className=" sticky top-0 z-50  p-4 bg-black shadow-md flex items-center justify-between text-white h-15">
+      <header className=" sticky top-0 z-50  p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
         {/* PHẦN 1: LOGO */}
         <div className="flex items-center space-x-2 ml-4">
           <a href="#">

@@ -141,7 +141,7 @@ const BannerList = () => {
 
               {/* LỚP ẢNH CHÍNH SẮC NÉT (Nằm bên phải vùng văn bản, chiếm phần còn lại) */}
               {/* Flex-grow để nó chiếm hết không gian còn lại, và flex để tự căn giữa ảnh bên trong */}
-              <div className="flex-grow flex items-center justify-center h-full ">
+              <div className="flex-grow flex items-center justify-center h-full  ">
                 <img
                   src={`${IMAGE_BASE_URL}${movie.backdrop_path}`}
                   alt={movie.name || movie.title}
