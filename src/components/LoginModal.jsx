@@ -1,7 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faCheckCircle } from "@fortawesome/free-solid-svg-icons"; // Thêm faCheckCircle cho thành công
-import logo from "../assets/img/logo.png";
 
 function LoginModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -45,13 +44,7 @@ function LoginModal({ isOpen, onClose }) {
 
             {/* 2. Logo & Tên (Z-index cao hơn nền) */}
             <div className="relative z-10 text-center">
-              <img
-                src={logo}
-                alt="RoPhim Logo"
-                className="h-20 w-auto mx-auto mb-3"
-              />
-              <h2 className="text-3xl font-bold text-white mb-1">RoPhim</h2>
-              <p className="text-md text-gray-300">Phim hay có rõ</p>
+              <img src="" alt="Logo" className="h-20 w-auto mx-auto mb-3" />
             </div>
           </div>
 

@@ -1,12 +1,15 @@
 import React from "react";
 import Header from "./components/Header";
-import Banner from "./components/Banner";
+import BannerList from "./components/BannerList";
+
+import List from "./components/List";
 
 function App() {
   return (
     <>
       <Header />
-      <Banner />
+      <BannerList />
+      <List />
     </>
   );
 }
