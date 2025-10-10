@@ -1,15 +1,14 @@
 import React from "react";
 import Header from "./components/Header";
 import BannerList from "./components/BannerList";
-
-import List from "./components/List";
+import CareList from "./components/CareList";
 
 function App() {
   return (
     <>
       <Header />
       <BannerList />
-      <List />
+      <CareList />
     </>
   );
 }
