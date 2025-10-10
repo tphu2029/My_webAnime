@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import login_img from "../assets/img/Chainsaw-Man-Reze_Death.jpg";
-import { faTimes } from "@fortawesome/free-solid-svg-icons"; // Thêm faCheckCircle cho thành công
+import login_img from "../assets/img/img_login.jpg";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 function LoginModal({ isOpen, onClose }) {
   if (!isOpen) return null;
