@@ -92,12 +92,12 @@ const BannerList = () => {
             {/* CONTAINER FLEX CHÍNH: Chứa cả văn bản và ảnh, được căn giữa theo chiều dọc */}
             <div className="absolute inset-0 flex items-center justify-start z-30">
               {/* VÙNG CHỨA CHI TIẾT PHIM (Văn bản và nút): CHIỀU RỘNG CỐ ĐỊNH */}
-              <div className="flex-shrink-0 w-full md:w-[450px] lg:w-[500px] p-10 md:p-20 text-center">
-                <p className="text-sm  mb-2 text-red-500 font-bold">
+              <div className="flex-shrink-0 w-full md:w-[450px] lg:w-[500px] p-10 md:p-20 text-center ">
+                <p className="text-sm  mb-2 text-red-500 font-bold ">
                   {movie.original_name || movie.original_title || movie.name}
                 </p>
                 <h1
-                  className="text-4xl font-extrabold mb-4 line-clamp-2"
+                  className="text-4xl font-extrabold mb-4 line-clamp-2 text-shadow-2xs shadow-stone-950"
                   style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
                 >
                   {movie.name || movie.title}
@@ -119,12 +119,14 @@ const BannerList = () => {
                   {movie.overview || "Không có mô tả chi tiết."}
                 </p>
                 {/* PLAY + THONG TIN (INTRO) */}
-                <div className="flex items-center justify-center space-x-15  ">
+                <div className="flex items-center justify-center space-x-15 ">
                   <a href="#Intro">
-                    <FontAwesomeIcon
-                      icon={faCirclePlay}
-                      className="text-7xl  hover:text-red-500 cursor-pointer transition-colors duration-200"
-                    />
+                    <a href="#Intro">
+                      <FontAwesomeIcon
+                        icon={faCirclePlay}
+                        className="text-7xl hover:text-red-500 cursor-pointer transition-colors duration-200 filter "
+                      />
+                    </a>
                   </a>
                   <div className="flex items-center space-x-4">
                     <FontAwesomeIcon

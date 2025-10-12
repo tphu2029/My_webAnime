@@ -6,7 +6,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 function LoginModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
-  // Hàm ngăn click bên trong modal làm modal đóng
+  // Hàm ngăn click bên trong modal làm modal đóng  
   const handleModalClick = (e) => {
     e.stopPropagation();
   };

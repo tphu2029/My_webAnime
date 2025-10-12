@@ -1,0 +1,9 @@
+/* src/CarouselOverrides.css */
+/* Ghi đè thuộc tính overflow của thư viện carousel */
+.carousel-root .carousel-slier {
+  overflow: visible !important;
+}
+
+.carousel-root .slide {
+  overflow: visible !important;
+}
