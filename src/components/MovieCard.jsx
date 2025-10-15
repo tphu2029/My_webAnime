@@ -15,30 +15,28 @@ const MovieCard = ({ movie }) => {
 
   const movieDetails = {
     title: movie.title || movie.name,
-    originalTitle: movie.original_title || movie.original_name,
-    ratingImdb: "5.2",
-    resolution: "4K",
-    ageRating: "T16",
-    year:
-      (movie.release_date || movie.first_air_date)?.substring(0, 4) || "2025",
-    duration: "1h 40m",
-    genres: ["Tình Cảm", "Hài", "Tâm Lý", "Lãng Mạn"],
+    originalTitle: movie.original_title || movie.original_name || "",
+    rating:
+      typeof movie.vote_average === "number"
+        ? movie.vote_average.toFixed(1)
+        : null,
+    votes: typeof movie.vote_count === "number" ? movie.vote_count : null,
+    year: (movie.release_date || movie.first_air_date)?.substring(0, 4) || null,
+    overview: movie.overview || "",
   };
 
   return (
-    <div className="relative group w-[200px] h-[300px]">
+    <div className="relative group w-[250px] h-[350px]">
       {/* Container của nội dung card, sẽ phóng to và nổi lên */}
       <div
         className="
           absolute inset-0 bg-gray-900 rounded-lg shadow-lg
-          transition-all duration-500 transform
-          group-hover:z-50 
-          group-hover:w-[400px] group-hover:h-[450px]
-          group-hover:-translate-x-1/4 group-hover:-translate-y-1/4
-          group-hover:rounded-xl group-hover:shadow-2xl 
-          group-hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)]
+          transition-transform duration-500 transform origin-center
+          group-hover:z-31
+           group-hover:delay-1000
+          group-hover:rounded-xl 
           group-hover:shadow-black/50
-          overflow-hidden
+          overflow-visible
         "
       >
         {/* Lớp phủ chứa ảnh nền và nội dung chi tiết */}
@@ -55,10 +53,12 @@ const MovieCard = ({ movie }) => {
           <div className="flex-1 p-4 text-white flex flex-col justify-between">
             {/* Tiêu đề */}
             <div>
-              <h3 className="text-xl font-bold truncate">
+              <h3 className="text-xl font-bold truncate line-clamp-2">
                 {movieDetails.title}
               </h3>
-              <p className="text-sm text-gray-400">Play Dirty</p>
+              <p className="text-sm text-gray-400 line-clamp-2">
+                {movieDetails.originalTitle}
+              </p>
             </div>
 
             {/* Các nút bấm */}
@@ -75,25 +75,27 @@ const MovieCard = ({ movie }) => {
               </button>
             </div>
 
-            {/* Thông tin phụ: IMDb, 4K, T16, Năm, Thời lượng */}
+            {/* Thông tin phụ dựa trên dữ liệu TMDB */}
             <div className="flex items-center text-xs text-gray-400 space-x-2 mb-2">
-              <span className="bg-yellow-500 text-black px-1 rounded font-semibold">
-                IMDb {movieDetails.ratingImdb}
-              </span>
-              <span className="border border-gray-600 px-1 rounded">
-                {movieDetails.resolution}
-              </span>
-              <span className="border border-gray-600 px-1 rounded">
-                {movieDetails.ageRating}
-              </span>
-              <span>{movieDetails.year}</span>
-              <span>{movieDetails.duration}</span>
+              {movieDetails.rating && (
+                <span className="bg-yellow-500 text-black px-1 rounded font-semibold">
+                  TMDB {movieDetails.rating}
+                </span>
+              )}
+              {movieDetails.year && <span>{movieDetails.year}</span>}
+              {movieDetails.votes !== null && (
+                <span className="border border-gray-600 px-1 rounded">
+                  {movieDetails.votes} votes
+                </span>
+              )}
             </div>
 
-            {/* Thể loại */}
-            <p className="text-xs text-gray-400">
-              {movieDetails.genres.join(" • ")}
-            </p>
+            {/* Mô tả ngắn */}
+            {movieDetails.overview && (
+              <p className="text-xs text-gray-400 line-clamp-2">
+                {movieDetails.overview}
+              </p>
+            )}
           </div>
         </div>
 

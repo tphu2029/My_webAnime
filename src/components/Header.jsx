@@ -13,9 +13,37 @@ function Header() {
   const [isGenreOpen, setIsGenreOpen] = useState(false);
   const [isYearOpen, setIsYearOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [genres, setGenres] = useState([]);
+  const [years, setYears] = useState([]);
+  const ANIME_GENRES = [
+    { name: "Shounen", slug: "shounen" },
+    { name: "Shoujo", slug: "shoujo" },
+    { name: "Seinen", slug: "seinen" },
+    { name: "Isekai", slug: "isekai" },
+    { name: "Mecha", slug: "mecha" },
+    { name: "Đời thường", slug: "slice-of-life" },
+    { name: "Hành động", slug: "action" },
+    { name: "Phiêu lưu", slug: "adventure" },
+    { name: "Hài hước", slug: "comedy" },
+    { name: "Lãng mạn", slug: "romance" },
+    { name: "Kỳ ảo", slug: "fantasy" },
+    { name: "Siêu nhiên", slug: "supernatural" },
+    { name: "Huyền bí", slug: "mystery" },
+    { name: "Khoa học viễn tưởng", slug: "sci-fi" },
+    { name: "Kinh dị", slug: "horror" },
+    { name: "Thể thao", slug: "sports" },
+    { name: "Âm nhạc", slug: "music" },
+    { name: "Trường học", slug: "school" },
+    { name: "Lịch sử", slug: "historical" },
+  ];
 
   const genreRef = useRef(null);
   const yearRef = useRef(null);
+  const searchRef = useRef(null);
 
   // CÁC HÀM XỬ LÝ
 
@@ -67,6 +95,15 @@ function Header() {
       ) {
         setIsYearOpen(false);
       }
+
+      // 3. Đóng ô kết quả tìm kiếm
+      if (
+        isSearchOpen &&
+        searchRef.current &&
+        !searchRef.current.contains(event.target)
+      ) {
+        setIsSearchOpen(false);
+      }
     }
 
     // Gắn sự kiện lắng nghe khi component mount
@@ -76,33 +113,66 @@ function Header() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isGenreOpen, isYearOpen]);
+  }, [isGenreOpen, isYearOpen, isSearchOpen]);
 
-  // Dữ liệu giả định cho menu thả xuống
-  const genres = [
-    "Hành Động",
-    "Viễn Tưởng",
-    "Kinh Dị",
-    "Tâm Lý",
-    "Hài",
-    "Âm Nhạc",
-    "Tài Liệu",
-    "Võ Thuật",
-    "Phiêu Lưu",
-  ];
+  // Tìm kiếm TMDB (debounce) - CHỈ anime/hoạt hình (genre_ids includes 16)
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(async () => {
+      const q = searchQuery.trim();
+      if (q.length < 2) {
+        setSearchResults([]);
+        setIsSearching(false);
+        return;
+      }
 
-  const years = [
-    "2025",
-    "2024",
-    "2023",
-    "2022",
-    "2021",
-    "2020",
-    "2019",
-    "2018",
-    "2017",
-    "2016",
-  ];
+      try {
+        setIsSearching(true);
+        const apiKey = import.meta.env.VITE_API_KEY;
+        const url = `https://api.themoviedb.org/3/search/multi?language=vi-VN&query=${encodeURIComponent(
+          q
+        )}&include_adult=false`;
+        const res = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error("Search failed");
+        const data = await res.json();
+        const results = (data.results || [])
+          .filter((r) => r.media_type === "movie" || r.media_type === "tv")
+          .filter((r) => Array.isArray(r.genre_ids) && r.genre_ids.includes(16))
+          .slice(0, 8);
+        setSearchResults(results);
+        setIsSearchOpen(true);
+      } catch (e) {
+        if (e.name !== "AbortError") {
+          setSearchResults([]);
+        }
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeout);
+    };
+  }, [searchQuery]);
+
+  // Khởi tạo years động và dùng danh sách thể loại anime tĩnh
+  useEffect(() => {
+    // Years từ năm hiện tại về 2006 (chỉ > 2005)
+    const now = new Date().getFullYear();
+    const yrs = [];
+    for (let y = now; y >= 2006; y--) yrs.push(String(y));
+    setYears(yrs);
+
+    setGenres(ANIME_GENRES);
+    return () => {};
+  }, []);
 
   return (
     <>
@@ -115,17 +185,77 @@ function Header() {
         </div>
 
         {/* Search */}
-        <div className="relative flex text-balance items-center w-[300px] ">
+        <div
+          ref={searchRef}
+          className="relative flex text-balance items-center w-[300px] "
+        >
           <FontAwesomeIcon
             icon={faSearch}
             className="absolute left-3 w-5 h-5 top-1/2 transform -translate-y-1/2 text-gray-400 mx-auto"
           />
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => searchResults.length && setIsSearchOpen(true)}
             placeholder="Tìm kiếm ..."
             className="w-100 py-1.5 pl-10 pr-4 rounded-lg border border-gray-500 bg-gray-700 
-                           focus:outline-none focus:ring-2 focus:ring-white-500 focus:border-white-500 "
+                          focus:outline-none focus:ring-2 focus:ring-white-500 focus:border-white-500 "
           />
+          {isSearchOpen && (searchResults.length > 0 || isSearching) && (
+            <div className="absolute top-full mt-2 left-0 right-0 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 max-h-96 overflow-auto">
+              {isSearching && (
+                <div className="px-4 py-3 text-sm text-gray-300">
+                  Đang tìm...
+                </div>
+              )}
+              {!isSearching &&
+                searchResults.map((item) => {
+                  const title = item.title || item.name;
+                  const date = (
+                    item.release_date ||
+                    item.first_air_date ||
+                    ""
+                  ).slice(0, 4);
+                  const img = item.poster_path
+                    ? `https://image.tmdb.org/t/p/w92${item.poster_path}`
+                    : null;
+                  return (
+                    <a
+                      key={`${item.media_type}-${item.id}`}
+                      href="#"
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-gray-700"
+                    >
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={title}
+                          className="w-8 h-12 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-8 h-12 bg-gray-600 rounded" />
+                      )}
+                      <div className="flex-1">
+                        <div className="text-sm text-white line-clamp-1">
+                          {title}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {date} •{" "}
+                          {item.media_type === "movie" ? "Phim lẻ" : "Phim bộ"}
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              {!isSearching &&
+                searchResults.length === 0 &&
+                searchQuery.trim().length >= 2 && (
+                  <div className="px-4 py-3 text-sm text-gray-300">
+                    Không tìm thấy kết quả
+                  </div>
+                )}
+            </div>
+          )}
         </div>
 
         {/* PHẦN 3: MENU*/}
@@ -155,12 +285,12 @@ function Header() {
               >
                 {genres.map((genre) => (
                   <a
-                    key={genre}
-                    href={`/the-loai/${genre}`}
+                    key={genre.slug}
+                    href={`/the-loai/anime/${genre.slug}`}
                     className="px-2 py-1 text-sm whitespace-nowrap 
                                text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
                   >
-                    {genre}
+                    {genre.name}
                   </a>
                 ))}
               </div>
