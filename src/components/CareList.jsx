@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import HorizontalCarousel from "./HorizontalCarousel";
+import "../assets/css/carouselOverride.css";
 
 const urlAnime =
   "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=1";
@@ -112,7 +113,7 @@ const CareList = () => {
         <a className="h-[150px] w-full bg-amber-100 rounded-3xl hover:scale-105 transform-fill transition-transform duration-300"></a>
       </div>
 
-      <div className="mt-20">
+      <div className="mt-20 over">
         {allMovies.map((list) => (
           <HorizontalCarousel
             key={list.title}

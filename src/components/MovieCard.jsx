@@ -35,14 +35,17 @@ const MovieCard = ({ movie }) => {
           group-hover:z-50 
           group-hover:w-[400px] group-hover:h-[450px]
           group-hover:-translate-x-1/4 group-hover:-translate-y-1/4
-          group-hover:rounded-xl group-hover:shadow-2xl overflow-hidden
+          group-hover:rounded-xl group-hover:shadow-2xl 
+          group-hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)]
+          group-hover:shadow-black/50
+          overflow-hidden
         "
       >
         {/* Lớp phủ chứa ảnh nền và nội dung chi tiết */}
-        <div className="absolute inset-0 bg-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col">
+        <div className="absolute inset-0 bg-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col overflow-visible">
           {/* Ảnh nền ở trên cùng, sẽ tràn ra ngoài */}
           <div
-            className="w-full h-2/3  mb-5 bg-cover bg-center rounded-t-lg transition-transform duration-500 transform group-hover:scale-120"
+            className="w-full h-2/3 mb-5 bg-cover bg-center rounded-t-lg transition-transform duration-500 transform group-hover:scale-110 group-hover:origin-center"
             style={{
               backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
             }}

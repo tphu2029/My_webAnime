@@ -7,12 +7,13 @@ import "../assets/css/carouselOverride.css";
 
 const HorizontalCarousel = ({ title, movies }) => {
   return (
-    <div className="relative mb-16 px-5">
-      <h2 className="font-extrabold text-3xl text-amber-700 ml-2 mb-4">
+    <div className="relative mb-16 px-5 overflow-visible">
+      <h2 className="font-extrabold text-3xl text-amber-100 ml-2 mb-4">
         {title}
       </h2>
-      <hr />
+
       <Carousel
+        className="my-custom-carousel"
         showThumbs={false}
         infiniteLoop
         showStatus={false}

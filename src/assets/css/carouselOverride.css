@@ -1,9 +1,16 @@
-/* src/CarouselOverrides.css */
-/* Ghi đè thuộc tính overflow của thư viện carousel */
-.carousel-root .carousel-slier {
+/* Ghi đè cụ thể hơn cho các element carousel */
+.my-custom-carousel .carousel.carousel-slider {
   overflow: visible !important;
 }
 
-.carousel-root .slide {
+.my-custom-carousel .carousel-slider-wrapper {
+  overflow: visible !important;
+}
+
+.my-custom-carousel .slider-wrapper {
+  overflow: visible !important;
+}
+
+.my-custom-carousel .slider {
   overflow: visible !important;
 }
