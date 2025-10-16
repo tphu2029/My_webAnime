@@ -118,7 +118,7 @@ const CareList = ({ type }) => {
   }
 
   return (
-    <div className="h-auto w-full bg-[#191b24] pb-16">
+    <div className="h-auto w-full bg-gray-950 pb-16">
       <div className="py-3"></div>
 
       <div className="mt-20 over">
