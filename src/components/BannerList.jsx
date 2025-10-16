@@ -9,12 +9,12 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 // --- TMDB CONFIGURATION ---
 const API_URL = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&without_genres=10751,35&page=1`;
 const IMAGE_BASE_URL = import.meta.env.VITE_IMG_URL;
-
+const apiKey = import.meta.env.VITE_API_KEY;
 const options = {
   method: "GET",
   headers: {
     accept: "application/json",
-    Authorization: `Bearer ${import.meta.env.VITE_API_URL}`,
+    Authorization: `Bearer ${apiKey}`,
   },
 };
 

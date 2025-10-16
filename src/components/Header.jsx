@@ -261,12 +261,6 @@ function Header() {
         {/* PHẦN 3: MENU*/}
 
         <div className="relative flex items-center space-x-6   ">
-          <a
-            href="#"
-            className="cursor-pointer hover:text-yellow-200 text-white"
-          >
-            Chủ đề
-          </a>
           <div className="relative">
             {" "}
             <a

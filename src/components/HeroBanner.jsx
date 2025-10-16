@@ -101,7 +101,7 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
   const year = formatYear(item);
 
   return (
-    <section className="relative  overflow-hidden bg-gray-900">
+    <section className="relative h-auto pb-4 overflow-hidden bg-gray-900">
       {/* Background */}
       <div
         className="absolute inset-0"

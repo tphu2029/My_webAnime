@@ -43,7 +43,7 @@ const MovieCard = ({ movie }) => {
         <div className="absolute inset-0 bg-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col overflow-visible">
           {/* Ảnh nền ở trên cùng, sẽ tràn ra ngoài */}
           <div
-            className="w-full h-2/3 mb-5 bg-cover bg-center rounded-t-lg transition-transform duration-500 transform group-hover:scale-110 group-hover:origin-center"
+            className="w-full h-2/3 mb-5 bg-cover bg-center rounded-t-lg transition-transform duration-500 transform  group-hover:origin-center"
             style={{
               backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
             }}
@@ -56,7 +56,7 @@ const MovieCard = ({ movie }) => {
               <h3 className="text-xl font-bold truncate line-clamp-2">
                 {movieDetails.title}
               </h3>
-              <p className="text-sm text-gray-400 line-clamp-2">
+              <p className="text-sm text-gray-400 line-clamp-1">
                 {movieDetails.originalTitle}
               </p>
             </div>
@@ -91,11 +91,6 @@ const MovieCard = ({ movie }) => {
             </div>
 
             {/* Mô tả ngắn */}
-            {movieDetails.overview && (
-              <p className="text-xs text-gray-400 line-clamp-2">
-                {movieDetails.overview}
-              </p>
-            )}
           </div>
         </div>
 
