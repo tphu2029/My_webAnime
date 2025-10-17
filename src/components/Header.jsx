@@ -256,7 +256,7 @@ function Header() {
           )}
         </div>
 
-        {/* 🔴 BƯỚC 2: MENU DESKTOP & NÚT ĐĂNG NHẬP */}
+        {/*  MENU DESKTOP & NÚT ĐĂNG NHẬP */}
         <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
           {/* MENU DESKTOP */}
           <nav className="relative flex items-center space-x-6">
@@ -344,7 +344,7 @@ function Header() {
           </div>
         </div>
 
-        {/* 🔴 BƯỚC 3: NÚT HAMBURGER CHO DI ĐỘNG */}
+        {/* NÚT HAMBURGER CHO DI ĐỘNG */}
         <div className="lg:hidden flex items-center ">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -355,7 +355,7 @@ function Header() {
         </div>
       </header>
 
-      {/* 🔴 BƯỚC 4: PANEL MENU CHO DI ĐỘNG */}
+      {/* PANEL MENU CHO DI ĐỘNG */}
       <div
         className={`fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-sm transform ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"

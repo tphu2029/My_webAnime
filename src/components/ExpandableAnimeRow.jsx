@@ -6,12 +6,12 @@ const INITIAL_VISIBLE_COUNT = 5; // Số phim hiển thị ban đầu trên desk
 const ExpandableAnimeRow = ({ title, movies = [] }) => {
   const [showAll, setShowAll] = useState(false);
 
-  // ✨ Tính toán số phim hiển thị ban đầu dựa trên breakpoint
+  // số phim hiển thị ban đầu dựa trên breakpoint
   const getInitialCount = () => {
     if (window.innerWidth < 640) return 4; // Mobile: 4 phim
-    if (window.innerWidth < 1024) return 8; // Tablet: 6 phim
-    if (window.innerWidth < 1440) return 10; // Laptop: 8 phim
-    return 12; // Desktop: 10 phim
+    if (window.innerWidth < 1024) return 8; // Tablet: 8 phim
+    if (window.innerWidth < 1440) return 10; // Laptop: 10 phim
+    return 12; // Desktop: 12 phim
   };
 
   const [visibleCount, setVisibleCount] = useState(getInitialCount());
@@ -27,20 +27,14 @@ const ExpandableAnimeRow = ({ title, movies = [] }) => {
   const remainingCount = movies.length - visibleCount;
 
   return (
-    // ✨ Tinh chỉnh padding và margin responsive
     <section className="mb-8 px-4 md:mb-12 md:px-5">
       {title && (
-        // ✨ Tinh chỉnh font-size và margin responsive
         <h2 className="mb-4 ml-2 text-2xl font-extrabold text-amber-700 md:mb-6 lg:text-3xl">
           {title}
         </h2>
       )}
 
-      {/* Grid đã responsive sẵn, giờ ta tinh chỉnh khoảng cách */}
-      <div
-        // ✨ Tinh chỉnh gap responsive
-        className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 md:gap-5"
-      >
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 md:gap-5">
         {visibleMovies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}

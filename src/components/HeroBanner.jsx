@@ -207,7 +207,7 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
       {/* Related posters row */}
       {relatedItems.length > 0 && (
         <div className="relative z-10 px-4 pb-6 md:px-10 lg:px-14">
-          {/* ✨ Cho phép trượt ngang trên mobile/tablet và ẩn thanh cuộn */}
+          {/* Cho phép trượt ngang trên mobile/tablet và ẩn thanh cuộn */}
           <div className="flex gap-3 overflow-x-auto whitespace-nowrap scrollbar-hide md:gap-4 lg:justify-center">
             {relatedItems.map((ri, idx) => {
               const src = ri.poster_path
@@ -231,7 +231,6 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
                     <img
                       src={src}
                       alt={titleOf(ri)}
-                      // ✨ Tinh chỉnh kích thước poster responsive
                       className="h-[150px] w-[100px] rounded-[10px] object-cover shadow md:h-[180px] md:w-[120px]"
                     />
                   ) : (
