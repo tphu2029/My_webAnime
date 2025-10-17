@@ -1,20 +1,28 @@
 import React from "react";
-import Header from "./components/Header";
-import BannerList from "./components/BannerList";
-import CareList from "./components/CareList";
-import HeroBanner from "./components/HeroBanner";
-import Footer from "./components/Footer";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Layout from "./components/Layout";
+import HomePage from "./components/HomePage";
+import CategoryPage from "./components/CategoryPage"; // Đổi đường dẫn nếu bạn chuyển file
 
 function App() {
   return (
-    <>
-      <Header />
-      <BannerList />
-      <CareList type="anime1" />
-      <HeroBanner />
-      <CareList type="anime2" />
-      <Footer />
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Route này sẽ áp dụng Layout (Header/Footer) cho tất cả các trang con */}
+        <Route path="/" element={<Layout />}>
+          {/* Khi URL là '/', hiển thị trang chủ */}
+          <Route index element={<HomePage />} />
+
+          {/* 👇 TẤT CẢ CÁC ROUTE NÀY GIỜ ĐỀU DÙNG CHUNG 'CategoryPage' */}
+          <Route path="/the-loai/anime/:genreSlug" element={<CategoryPage />} />
+          <Route path="/phim-le" element={<CategoryPage />} />
+          <Route path="/phim-bo" element={<CategoryPage />} />
+          <Route path="/phim-chieu-rap" element={<CategoryPage />} />
+          <Route path="/nam/:year" element={<CategoryPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

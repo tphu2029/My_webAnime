@@ -13,7 +13,7 @@ function LoginModal({ isOpen, onClose }) {
   return (
     // Lớp phủ tối (Overlay)
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-opacity-60 backdrop-blur-sm"
       onClick={onClose}
     >
       {/* CONTAINER MODAL CHÍNH - Responsive */}

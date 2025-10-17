@@ -26,12 +26,11 @@ const MovieCard = ({ movie }) => {
   };
 
   return (
-    // ✨ Bỏ kích thước cố định, dùng aspect-ratio để giữ tỷ lệ và w-full để co giãn
     <div className="group relative w-full cursor-pointer overflow-hidden rounded-lg bg-gray-900 shadow-md transition-transform duration-300 hover:scale-105">
       {/* Container chính của card, dùng aspect-ratio [2/3] giống poster phim */}
       <div className="aspect-[2/3]">
         {/* Phần hiển thị ban đầu (chỉ ảnh poster) */}
-        {/* ✨ Thêm lg:group-hover:opacity-0 để chỉ ẩn trên desktop khi hover */}
+
         <div className="absolute inset-0 transition-opacity duration-300 lg:group-hover:opacity-0">
           <img
             src={`${IMAGE_BASE_URL}${movie.poster_path}`}
@@ -43,7 +42,6 @@ const MovieCard = ({ movie }) => {
         </div>
 
         {/* --- PHẦN CHI TIẾT KHI HOVER (CHỈ HIỆN TRÊN DESKTOP) --- */}
-        {/* ✨ Thêm 'hidden lg:flex' và 'lg:opacity-0 lg:group-hover:opacity-100' */}
         <div
           className="
             absolute inset-0 flex-col overflow-hidden bg-gray-900 

@@ -66,7 +66,6 @@ const BannerList = () => {
   return (
     <div className="relative w-full">
       <Carousel
-        // ... props của Carousel giữ nguyên
         showArrows={false}
         showThumbs={false}
         showStatus={false}
@@ -83,7 +82,7 @@ const BannerList = () => {
           <div
             key={movie.id}
             // banner
-            className="relative h-[50vh] overflow-hidden text-white md:h-[700px]"
+            className="relative h-[50vh] overflow-hidden text-white md:h-[700px] "
           >
             <img
               src={`${IMAGE_BASE_URL}w1280${movie.backdrop_path}`}

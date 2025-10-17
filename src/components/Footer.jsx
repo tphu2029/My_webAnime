@@ -1,4 +1,5 @@
 import React from "react";
+import logo from "../assets/img/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTelegram,
@@ -32,9 +33,6 @@ const Footer = () => {
         {/* Logo và tagline */}
         <div className="mb-5">
           <div className="flex items-center gap-3 mb-5">
-            <div className="relative flex items-center justify-center w-12 h-12">
-              {/* Logo hình tròn với chữ ROANIME -- PS/ CHUA LAM */}{" "}
-            </div>
             <div className="flex flex-col">
               <h2 className="text-3xl font-bold text-white">RoAnime</h2>
               <p className="text-sm text-gray-300 mt-1">Anime hay cả rổ</p>

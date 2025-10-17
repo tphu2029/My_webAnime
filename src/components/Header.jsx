@@ -1,12 +1,13 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
   faUser,
   faCaretDown,
-  faBars, // <-- Thêm icon hamburger
-  faTimes, // <-- Thêm icon đóng (X)
+  faBars,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/img/logo.png";
 
@@ -23,29 +24,25 @@ function Header() {
   const [genres, setGenres] = useState([]);
   const [years, setYears] = useState([]);
 
-  // 🔴 BƯỚC 1: THÊM STATE CHO MENU DI ĐỘNG
+  // THÊM STATE CHO MENU DI ĐỘNG
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const ANIME_GENRES = [
+    // Demographics & Tropes
     { name: "Shounen", slug: "shounen" },
     { name: "Shoujo", slug: "shoujo" },
     { name: "Seinen", slug: "seinen" },
     { name: "Isekai", slug: "isekai" },
-    { name: "Mecha", slug: "mecha" },
-    { name: "Đời thường", slug: "slice-of-life" },
-    { name: "Hành động", slug: "action" },
-    { name: "Phiêu lưu", slug: "adventure" },
+
+    // Standard Genres
+    { name: "Hành động & Phiêu lưu", slug: "action" },
     { name: "Hài hước", slug: "comedy" },
     { name: "Lãng mạn", slug: "romance" },
-    { name: "Kỳ ảo", slug: "fantasy" },
-    { name: "Siêu nhiên", slug: "supernatural" },
+    { name: "Kỳ ảo & Siêu nhiên", slug: "fantasy" },
     { name: "Huyền bí", slug: "mystery" },
     { name: "Khoa học viễn tưởng", slug: "sci-fi" },
-    { name: "Kinh dị", slug: "horror" },
     { name: "Thể thao", slug: "sports" },
-    { name: "Âm nhạc", slug: "music" },
     { name: "Trường học", slug: "school" },
-    { name: "Lịch sử", slug: "historical" },
   ];
 
   const genreRef = useRef(null);
@@ -55,7 +52,7 @@ function Header() {
   const openLoginModal = (e) => {
     e.preventDefault();
     setIsModalOpen(true);
-    setIsMobileMenuOpen(false); // Đóng menu di động khi mở modal
+    setIsMobileMenuOpen(false);
     setIsGenreOpen(false);
     setIsYearOpen(false);
   };
@@ -175,7 +172,7 @@ function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
+      <header className="sticky top-0 z-50 p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
         {/* PHẦN 1: LOGO */}
         <div className="flex items-center">
           <a href="/">
@@ -272,7 +269,7 @@ function Header() {
               {isGenreOpen && (
                 <div
                   ref={genreRef}
-                  className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-4 gap-x-6 gap-y-2 w-max min-w-[500px]"
+                  className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-3 gap-x-6 gap-y-2 w-max min-w-[500px]"
                 >
                   {genres.map((genre) => (
                     <a
@@ -286,24 +283,25 @@ function Header() {
                 </div>
               )}
             </div>
-            <a
-              href="#"
+
+            <Link
+              to="/phim-le"
               className="cursor-pointer hover:text-yellow-200 text-white"
             >
               Phim Lẻ
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/phim-bo"
               className="cursor-pointer hover:text-yellow-200 text-white"
             >
               Phim Bộ
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/phim-chieu-rap"
               className="cursor-pointer hover:text-yellow-200 text-white"
             >
               Phim chiếu rạp
-            </a>
+            </Link>
             <div className="relative">
               <a
                 href="#"
