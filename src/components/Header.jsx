@@ -409,13 +409,14 @@ function Header() {
             <h3 className="text-gray-400 font-bold mb-2">Thể Loại</h3>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               {genres.map((genre) => (
-                <a
+                <Link
                   key={genre.slug}
-                  href={`/the-loai/anime/${genre.slug}`}
+                  to={`/the-loai/anime/${genre.slug}`}
+                  onClick={handleMobileLinkClick}
                   className="text-gray-200 hover:text-yellow-400 whitespace-nowrap"
                 >
                   {genre.name}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -424,13 +425,14 @@ function Header() {
             <h3 className="text-gray-400 font-bold mb-2">Năm</h3>
             <div className="grid grid-cols-3 gap-x-4 gap-y-2">
               {years.map((year) => (
-                <a
+                <Link
                   key={year}
-                  href={`/nam/${year}`}
-                  className="text-gray-200 hover:text-yellow-400"
+                  to={`/nam/${year}`}
+                  onClick={handleMobileLinkClick}
+                  className="px-2 py-1 text-sm whitespace-nowrap text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
                 >
                   {year}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
