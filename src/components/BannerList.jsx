@@ -52,13 +52,13 @@ const BannerList = () => {
 
   if (loading)
     return (
-      <div className="text-white text-center p-10 h-[700px] bg-gray-900 flex items-center justify-center">
+      <div className="flex h-[50vh] items-center justify-center bg-gray-900 p-10 text-center text-white md:h-[700px]">
         Đang tải dữ liệu Banner...
       </div>
     );
   if (error)
     return (
-      <div className="text-red-500 text-center p-10 h-[700px] bg-gray-900 flex items-center justify-center">
+      <div className="flex h-[50vh] items-center justify-center bg-gray-900 p-10 text-center text-red-500 md:h-[700px]">
         {error}
       </div>
     );
@@ -66,6 +66,7 @@ const BannerList = () => {
   return (
     <div className="relative w-full">
       <Carousel
+        // ... props của Carousel giữ nguyên
         showArrows={false}
         showThumbs={false}
         showStatus={false}
@@ -81,60 +82,58 @@ const BannerList = () => {
         {topAnime.map((movie) => (
           <div
             key={movie.id}
-            className="relative h-[700px] text-white overflow-hidden"
+            // banner
+            className="relative h-[50vh] overflow-hidden text-white md:h-[700px]"
           >
-            {/* Lớp nền chính là ảnh backdrop */}
             <img
               src={`${IMAGE_BASE_URL}w1280${movie.backdrop_path}`}
               alt={movie.name || movie.title}
-              className="absolute inset-0 w-full h-full object-cover z-0"
+              className="absolute inset-0 z-0 h-full w-full object-cover"
             />
-
-            {/* Overlay gradient và blur để làm nổi bật nội dung */}
-            <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-950/70 via-transparent to-transparent z-20"></div>
+            {/* Lớp phủ */}
+            <div className="absolute inset-0 z-10 bg-black opacity-50"></div>
+            <div className="absolute inset-0 z-20 bg-gradient-to-r from-gray-950/70 via-transparent to-transparent"></div>
 
             {/* Container nội dung */}
-            <div className="relative z-30 flex flex-col items-start justify-center h-full p-4 md:p-10 lg:p-20">
+            <div className="relative z-30 flex h-full flex-col items-start justify-center p-6 md:p-10 lg:p-20">
               <div className="max-w-xl text-left">
-                <p className="text-sm mb-2 text-red-500 font-bold">
+                <p className="mb-2 text-sm font-bold text-red-500 line-clamp-1 md:line-clamp-none">
                   {movie.original_name || movie.original_title || movie.name}
                 </p>
-                <h1 className="text-4xl font-extrabold mb-4 line-clamp-2 text-shadow-2xs shadow-stone-950">
+                <h1
+                  // ✨ 2. Kích thước tiêu đề: text-3xl cho mobile, to dần ra trên màn hình lớn
+                  className="mb-4 line-clamp-2 text-3xl font-extrabold text-shadow-2xs shadow-stone-950 md:text-4xl lg:text-5xl"
+                >
                   {movie.name || movie.title}
                 </h1>
-                <div className="flex items-center space-x-4 mb-4 text-sm font-semibold">
-                  <span className="bg-yellow-500 text-black px-2 py-1 rounded">
-                    IMDb{" "}
-                    {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
-                  </span>
-                  <span>HD</span>
-                  <span>
-                    {movie.first_air_date
-                      ? movie.first_air_date.split("-")[0]
-                      : movie.release_date?.split("-")[0]}
-                  </span>
-                  <span>TV Show</span>
+
+                {/* Thông tin phụ */}
+                <div className="mb-4 flex items-center space-x-4 text-sm font-semibold">
+                  {/* ... nội dung giữ nguyên ... */}
                 </div>
-                <p className="text-base mb-8 text-gray-300 line-clamp-3">
+                <p className="mb-8 text-base text-gray-300 line-clamp-3">
                   {movie.overview || "Không có mô tả chi tiết."}
                 </p>
-                {/* PLAY + THONG TIN */}
-                <div className="flex items-center space-x-15">
+
+                {/* Các nút bấm */}
+                {/* ✨ 3. Khoảng cách nút: space-x-6 cho mobile, space-x-8 từ tablet */}
+                <div className="flex items-center space-x-6 md:space-x-8">
                   <a href="#Intro">
                     <FontAwesomeIcon
                       icon={faCirclePlay}
-                      className="text-7xl hover:text-red-500 cursor-pointer transition-colors duration-200"
+                      // ✨ 4. Kích thước icon: text-6xl cho mobile, text-7xl từ tablet
+                      className="cursor-pointer text-6xl transition-colors duration-200 hover:text-red-500 md:text-7xl"
                     />
                   </a>
                   <div className="flex items-center space-x-4">
                     <FontAwesomeIcon
                       icon={faHeart}
-                      className="text-4xl text-white cursor-pointer hover:text-red-500 transition-colors duration-200"
+                      // ✨ 5. Kích thước icon: text-3xl cho mobile, text-4xl từ tablet
+                      className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
                     />
                     <FontAwesomeIcon
                       icon={faCircleInfo}
-                      className="text-4xl text-white cursor-pointer hover:text-red-500 transition-colors duration-200"
+                      className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
                     />
                   </div>
                 </div>

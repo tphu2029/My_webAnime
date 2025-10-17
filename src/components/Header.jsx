@@ -1,15 +1,18 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSearch,
+  faUser,
+  faCaretDown,
+  faBars, // <-- Thêm icon hamburger
+  faTimes, // <-- Thêm icon đóng (X)
+} from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/img/logo.png";
 
 import LoginModal from "./LoginModal";
 
 function Header() {
-  // 🔴 BƯỚC 2: KHAI BÁO STATE
   const [isGenreOpen, setIsGenreOpen] = useState(false);
   const [isYearOpen, setIsYearOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +22,10 @@ function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [genres, setGenres] = useState([]);
   const [years, setYears] = useState([]);
+
+  // 🔴 BƯỚC 1: THÊM STATE CHO MENU DI ĐỘNG
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const ANIME_GENRES = [
     { name: "Shounen", slug: "shounen" },
     { name: "Shoujo", slug: "shoujo" },
@@ -45,40 +52,45 @@ function Header() {
   const yearRef = useRef(null);
   const searchRef = useRef(null);
 
-  // CÁC HÀM XỬ LÝ
-
-  // Hàm mở Modal và đóng mọi Dropdown khác
   const openLoginModal = (e) => {
     e.preventDefault();
     setIsModalOpen(true);
+    setIsMobileMenuOpen(false); // Đóng menu di động khi mở modal
     setIsGenreOpen(false);
     setIsYearOpen(false);
   };
 
-  // Hàm đóng Modal
   const closeLoginModal = () => {
     setIsModalOpen(false);
   };
 
-  // Hàm xử lý việc đóng mở menu
   const toggleGenreMenu = (e) => {
     e.preventDefault();
     setIsGenreOpen(!isGenreOpen);
     setIsYearOpen(false);
   };
 
-  // Hàm xử lý đóng mở menu cho NĂM
   const toggleYearMenu = (e) => {
     e.preventDefault();
     setIsYearOpen(!isYearOpen);
     setIsGenreOpen(false);
   };
 
-  // Logic ĐÓNG KHI CLICK RA NGOÀI
+  // Ngăn cuộn trang khi menu di động mở
   useEffect(() => {
-    // Hàm xử lý sự kiện click
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
     function handleClickOutside(event) {
-      // 1. Kiểm tra Dropdown THỂ LOẠI
       if (
         isGenreOpen &&
         genreRef.current &&
@@ -86,8 +98,6 @@ function Header() {
       ) {
         setIsGenreOpen(false);
       }
-
-      // 2. Kiểm tra Dropdown NĂM
       if (
         isYearOpen &&
         yearRef.current &&
@@ -95,8 +105,6 @@ function Header() {
       ) {
         setIsYearOpen(false);
       }
-
-      // 3. Đóng ô kết quả tìm kiếm
       if (
         isSearchOpen &&
         searchRef.current &&
@@ -105,17 +113,12 @@ function Header() {
         setIsSearchOpen(false);
       }
     }
-
-    // Gắn sự kiện lắng nghe khi component mount
     document.addEventListener("mousedown", handleClickOutside);
-
-    // Dọn dẹp: Loại bỏ sự kiện lắng nghe khi component unmount
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isGenreOpen, isYearOpen, isSearchOpen]);
 
-  // Tìm kiếm TMDB (debounce) - CHỈ anime/hoạt hình (genre_ids includes 16)
   useEffect(() => {
     const controller = new AbortController();
     const timeout = setTimeout(async () => {
@@ -125,7 +128,6 @@ function Header() {
         setIsSearching(false);
         return;
       }
-
       try {
         setIsSearching(true);
         const apiKey = import.meta.env.VITE_API_KEY;
@@ -162,36 +164,33 @@ function Header() {
     };
   }, [searchQuery]);
 
-  // Khởi tạo years động và dùng danh sách thể loại anime tĩnh
   useEffect(() => {
-    // Years từ năm hiện tại về 2006 (chỉ > 2005)
     const now = new Date().getFullYear();
     const yrs = [];
     for (let y = now; y >= 2006; y--) yrs.push(String(y));
     setYears(yrs);
-
     setGenres(ANIME_GENRES);
     return () => {};
   }, []);
 
   return (
     <>
-      <header className=" sticky top-0 z-50  p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
+      <header className="sticky top-0 z-40 p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
         {/* PHẦN 1: LOGO */}
-        <div className="flex items-center space-x-2 ml-4">
-          <a href="#">
-            <img src={logo} alt="logo" className="h-12 w-auto" />
+        <div className="flex items-center">
+          <a href="/">
+            <img src={logo} alt="logo" className="h-10 sm:h-12 w-auto" />
           </a>
         </div>
 
-        {/* Search */}
+        {/* PHẦN 2: SEARCH - Chiếm không gian linh hoạt trên mobile/tablet/desktop */}
         <div
           ref={searchRef}
-          className="relative flex text-balance items-center w-[300px] "
+          className="relative flex-1  lg:flex-none  lg:w-[240px] xl:w-[500px] mx-4"
         >
           <FontAwesomeIcon
             icon={faSearch}
-            className="absolute left-3 w-5 h-5 top-1/2 transform -translate-y-1/2 text-gray-400 mx-auto"
+            className="absolute left-3 w-5 h-5 top-1/2 transform -translate-y-1/2 text-gray-400 "
           />
           <input
             type="text"
@@ -199,8 +198,7 @@ function Header() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => searchResults.length && setIsSearchOpen(true)}
             placeholder="Tìm kiếm ..."
-            className="w-100 py-1.5 pl-10 pr-4 rounded-lg border border-gray-500 bg-gray-700 
-                          focus:outline-none focus:ring-2 focus:ring-white-500 focus:border-white-500 "
+            className="w-full py-1.5 pl-10 pr-4 rounded-lg border border-gray-500 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white-500 focus:border-white-500"
           />
           {isSearchOpen && (searchResults.length > 0 || isSearching) && (
             <div className="absolute top-full mt-2 left-0 right-0 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 max-h-96 overflow-auto">
@@ -258,102 +256,183 @@ function Header() {
           )}
         </div>
 
-        {/* PHẦN 3: MENU*/}
-
-        <div className="relative flex items-center space-x-6   ">
-          <div className="relative">
-            {" "}
-            <a
-              href="#"
-              onClick={toggleGenreMenu}
-              className="cursor-pointer hover:text-yellow-200 text-white"
-            >
-              Thể loại
-              <FontAwesomeIcon icon={faCaretDown} className="ml-0.5" />
-            </a>
-            {isGenreOpen && (
-              <div
-                ref={genreRef}
-                className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl 
-                           bg-gray-800 border border-gray-700 grid grid-cols-4 gap-x-6 gap-y-2 w-max min-w-[500px]"
+        {/* 🔴 BƯỚC 2: MENU DESKTOP & NÚT ĐĂNG NHẬP */}
+        <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
+          {/* MENU DESKTOP */}
+          <nav className="relative flex items-center space-x-6">
+            <div className="relative">
+              <a
+                href="#"
+                onClick={toggleGenreMenu}
+                className="cursor-pointer hover:text-yellow-200 text-white"
               >
-                {genres.map((genre) => (
-                  <a
-                    key={genre.slug}
-                    href={`/the-loai/anime/${genre.slug}`}
-                    className="px-2 py-1 text-sm whitespace-nowrap 
-                               text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
-                  >
-                    {genre.name}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <a
-            href="#"
-            className="cursor-pointer hover:text-yellow-200 text-white"
-          >
-            Phim Lẻ
-          </a>
-          <a
-            href="#"
-            className="cursor-pointer hover:text-yellow-200 text-white"
-          >
-            Phim Bộ
-          </a>
-          <a
-            href="#"
-            className="cursor-pointer hover:text-yellow-200 text-white"
-          >
-            Phim chiếu rạp
-          </a>
-          <div className="relative">
+                Thể loại
+                <FontAwesomeIcon icon={faCaretDown} className="ml-0.5" />
+              </a>
+              {isGenreOpen && (
+                <div
+                  ref={genreRef}
+                  className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-4 gap-x-6 gap-y-2 w-max min-w-[500px]"
+                >
+                  {genres.map((genre) => (
+                    <a
+                      key={genre.slug}
+                      href={`/the-loai/anime/${genre.slug}`}
+                      className="px-2 py-1 text-sm whitespace-nowrap text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
+                    >
+                      {genre.name}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
             <a
               href="#"
-              onClick={toggleYearMenu}
               className="cursor-pointer hover:text-yellow-200 text-white"
             >
-              Năm
-              <FontAwesomeIcon icon={faCaretDown} className="ml-0.5" />
+              Phim Lẻ
+            </a>
+            <a
+              href="#"
+              className="cursor-pointer hover:text-yellow-200 text-white"
+            >
+              Phim Bộ
+            </a>
+            <a
+              href="#"
+              className="cursor-pointer hover:text-yellow-200 text-white"
+            >
+              Phim chiếu rạp
+            </a>
+            <div className="relative">
+              <a
+                href="#"
+                onClick={toggleYearMenu}
+                className="cursor-pointer hover:text-yellow-200 text-white"
+              >
+                Năm
+                <FontAwesomeIcon icon={faCaretDown} className="ml-0.5" />
+              </a>
               {isYearOpen && (
                 <div
                   ref={yearRef}
-                  className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl 
-                           bg-gray-800 border border-gray-700 grid grid-cols-2 gap-x-6 gap-y-2 w-50% min-w-[200px]"
+                  className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-2 gap-x-6 gap-y-2 w-max min-w-[200px]"
                 >
                   {years.map((year) => (
                     <a
                       key={year}
                       href={`/nam/${year}`}
-                      className="px-2 py-1 text-sm whitespace-nowrap 
-                               text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
+                      className="px-2 py-1 text-sm whitespace-nowrap text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
                     >
                       {year}
                     </a>
                   ))}
                 </div>
               )}
+            </div>
+          </nav>
+          {/* USER DESKTOP */}
+          <div className="flex items-center text-sm font-semibold">
+            <a
+              href="#"
+              onClick={openLoginModal}
+              className="flex items-center space-x-2 py-2 px-4 bg-white text-gray-900 font-bold rounded-full shadow-lg transition duration-200 hover:bg-gray-200"
+            >
+              <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
+              <span>Đăng nhập</span>
             </a>
           </div>
         </div>
 
-        {/* USER */}
-        <div className="flex items-center text-sm font-semibold">
+        {/* 🔴 BƯỚC 3: NÚT HAMBURGER CHO DI ĐỘNG */}
+        <div className="lg:hidden flex items-center ">
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-white focus:outline-none"
+          >
+            <FontAwesomeIcon icon={faBars} className="w-10 h-10" />
+          </button>
+        </div>
+      </header>
+
+      {/* 🔴 BƯỚC 4: PANEL MENU CHO DI ĐỘNG */}
+      <div
+        className={`fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-sm transform ${
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 ease-in-out lg:hidden`}
+      >
+        {/* Header của menu */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-700">
+          <a href="/" onClick={() => setIsMobileMenuOpen(false)}>
+            <img src={logo} alt="logo" className="h-10 w-auto" />
+          </a>
+          <button onClick={() => setIsMobileMenuOpen(false)}>
+            <FontAwesomeIcon icon={faTimes} className="w-6 h-6 text-white" />
+          </button>
+        </div>
+
+        {/* Nội dung menu */}
+        <nav className="p-4 flex flex-col h-full overflow-y-auto">
           <a
             href="#"
             onClick={openLoginModal}
-            className="flex items-center space-x-2 py-2 px-4 ml-6 
-                       bg-white text-gray-900 font-bold 
-                       rounded-full shadow-lg transition duration-200 
-                       hover:bg-gray-200"
+            className="flex  items-center justify-center space-x-2 py-2 px-4 mb-6 bg-white text-gray-900 font-bold rounded-full shadow-lg transition duration-200 hover:bg-gray-200"
           >
             <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
             <span>Đăng nhập</span>
           </a>
-        </div>
-      </header>
+
+          <a
+            href="#"
+            className="text-lg py-2 text-gray-200 hover:text-yellow-400"
+          >
+            Phim Lẻ
+          </a>
+          <a
+            href="#"
+            className="text-lg py-2 text-gray-200 hover:text-yellow-400"
+          >
+            Phim Bộ
+          </a>
+          <a
+            href="#"
+            className="text-lg py-2 text-gray-200 hover:text-yellow-400"
+          >
+            Phim chiếu rạp
+          </a>
+
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <h3 className="text-gray-400 font-bold mb-2">Thể Loại</h3>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              {genres.map((genre) => (
+                <a
+                  key={genre.slug}
+                  href={`/the-loai/anime/${genre.slug}`}
+                  className="text-gray-200 hover:text-yellow-400 whitespace-nowrap"
+                >
+                  {genre.name}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <h3 className="text-gray-400 font-bold mb-2">Năm</h3>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-2">
+              {years.map((year) => (
+                <a
+                  key={year}
+                  href={`/nam/${year}`}
+                  className="text-gray-200 hover:text-yellow-400"
+                >
+                  {year}
+                </a>
+              ))}
+            </div>
+          </div>
+        </nav>
+      </div>
+
       <LoginModal isOpen={isModalOpen} onClose={closeLoginModal}></LoginModal>
     </>
   );

@@ -1,41 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MovieCard from "./MovieCard";
 
-// Hiển thị 5 anime đầu, bấm "Xem thêm" để mở rộng danh sách còn lại
-// Giữ hiệu ứng hover của MovieCard nhưng không tạo scroll ngang
-// Props: title: string, movies: array
+const INITIAL_VISIBLE_COUNT = 5; // Số phim hiển thị ban đầu trên desktop
+
 const ExpandableAnimeRow = ({ title, movies = [] }) => {
   const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? movies : movies.slice(0, 5);
+
+  // ✨ Tính toán số phim hiển thị ban đầu dựa trên breakpoint
+  const getInitialCount = () => {
+    if (window.innerWidth < 640) return 4; // Mobile: 4 phim
+    if (window.innerWidth < 1024) return 8; // Tablet: 6 phim
+    if (window.innerWidth < 1440) return 10; // Laptop: 8 phim
+    return 12; // Desktop: 10 phim
+  };
+
+  const [visibleCount, setVisibleCount] = useState(getInitialCount());
+
+  // Cập nhật lại số lượng phim khi resize màn hình
+  useEffect(() => {
+    const handleResize = () => setVisibleCount(getInitialCount());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const visibleMovies = showAll ? movies : movies.slice(0, visibleCount);
+  const remainingCount = movies.length - visibleCount;
 
   return (
-    <section className="mb-12 px-5">
+    // ✨ Tinh chỉnh padding và margin responsive
+    <section className="mb-8 px-4 md:mb-12 md:px-5">
       {title && (
-        <h2 className="font-extrabold text-3xl text-amber-700 ml-2 mb-8">
+        // ✨ Tinh chỉnh font-size và margin responsive
+        <h2 className="mb-4 ml-2 text-2xl font-extrabold text-amber-700 md:mb-6 lg:text-3xl">
           {title}
         </h2>
       )}
 
-      {/* Wrapper chặn tràn ngang để hover không tạo scrollbar */}
-      <div className="overflow-x-hidden">
-        {/* Dùng grid/flex để không cần carousel */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {visible.map((movie) => (
-            <div key={movie.id}>
-              <MovieCard movie={movie} />
-            </div>
-          ))}
-        </div>
+      {/* Grid đã responsive sẵn, giờ ta tinh chỉnh khoảng cách */}
+      <div
+        // ✨ Tinh chỉnh gap responsive
+        className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 md:gap-5"
+      >
+        {visibleMovies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))}
       </div>
 
-      {movies.length > 5 && (
+      {movies.length > visibleCount && (
         <div className="mt-6 flex justify-center">
           <button
             type="button"
             onClick={() => setShowAll((s) => !s)}
-            className="px-5 py-2 rounded-full bg-gray-800 text-gray-100 hover:bg-gray-700 transition"
+            className="rounded-full bg-gray-800 px-5 py-2 text-sm text-gray-100 transition hover:bg-gray-700"
           >
-            {showAll ? "Thu gọn" : `Xem thêm (${movies.length - 5})`}
+            {showAll ? "Thu gọn" : `Xem thêm (${remainingCount})`}
           </button>
         </div>
       )}

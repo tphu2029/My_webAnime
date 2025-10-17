@@ -26,81 +26,74 @@ const MovieCard = ({ movie }) => {
   };
 
   return (
-    <div className="relative group w-[250px] h-[350px]">
-      {/* Container của nội dung card, sẽ phóng to và nổi lên */}
-      <div
-        className="
-          absolute inset-0 bg-gray-900 rounded-lg shadow-lg
-          transition-transform duration-500 transform origin-center
-          group-hover:z-31
-           group-hover:delay-1000
-          group-hover:rounded-xl 
-          group-hover:shadow-black/50
-          overflow-visible
-        "
-      >
-        {/* Lớp phủ chứa ảnh nền và nội dung chi tiết */}
-        <div className="absolute inset-0 bg-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col overflow-visible">
-          {/* Ảnh nền ở trên cùng, sẽ tràn ra ngoài */}
+    // ✨ Bỏ kích thước cố định, dùng aspect-ratio để giữ tỷ lệ và w-full để co giãn
+    <div className="group relative w-full cursor-pointer overflow-hidden rounded-lg bg-gray-900 shadow-md transition-transform duration-300 hover:scale-105">
+      {/* Container chính của card, dùng aspect-ratio [2/3] giống poster phim */}
+      <div className="aspect-[2/3]">
+        {/* Phần hiển thị ban đầu (chỉ ảnh poster) */}
+        {/* ✨ Thêm lg:group-hover:opacity-0 để chỉ ẩn trên desktop khi hover */}
+        <div className="absolute inset-0 transition-opacity duration-300 lg:group-hover:opacity-0">
+          <img
+            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+            alt={movieDetails.title}
+            className="h-full w-full object-cover"
+          />
+          {/* Lớp phủ tối nhẹ trên poster cho đẹp hơn */}
+          <div className="absolute inset-0 bg-black/10"></div>
+        </div>
+
+        {/* --- PHẦN CHI TIẾT KHI HOVER (CHỈ HIỆN TRÊN DESKTOP) --- */}
+        {/* ✨ Thêm 'hidden lg:flex' và 'lg:opacity-0 lg:group-hover:opacity-100' */}
+        <div
+          className="
+            absolute inset-0 flex-col overflow-hidden bg-gray-900 
+            opacity-0 transition-opacity duration-500 
+            hidden lg:flex lg:group-hover:opacity-100
+          "
+        >
+          {/* Ảnh nền backdrop */}
           <div
-            className="w-full h-2/3 mb-5 bg-cover bg-center rounded-t-lg transition-transform duration-500 transform  group-hover:origin-center"
+            className="h-1/2 w-full bg-cover bg-center"
             style={{
               backgroundImage: `url(${IMAGE_BASE_URL}${movie.backdrop_path})`,
             }}
           ></div>
 
           {/* Nội dung chi tiết phim */}
-          <div className="flex-1 p-4 text-white flex flex-col justify-between">
-            {/* Tiêu đề */}
+          <div className="flex h-1/2 flex-col justify-between p-3 text-white">
             <div>
-              <h3 className="text-xl font-bold truncate line-clamp-2">
+              <h3 className="truncate text-base font-bold">
                 {movieDetails.title}
               </h3>
-              <p className="text-sm text-gray-400 line-clamp-1">
+              <p className="truncate text-xs text-gray-400">
                 {movieDetails.originalTitle}
               </p>
             </div>
 
             {/* Các nút bấm */}
-            <div className="flex justify-between items-center my-4 space-x-2">
-              <button className="flex-1 px-4 py-2 bg-yellow-500 text-black text-sm font-semibold rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center">
-                <FontAwesomeIcon icon={faPlayCircle} className="mr-2" />
-                Xem ngay
+            <div className="flex items-center space-x-2">
+              <button className="flex flex-1 items-center justify-center rounded-lg bg-yellow-500 px-3 py-1.5 text-xs font-semibold text-black transition-colors hover:bg-yellow-600">
+                <FontAwesomeIcon icon={faPlayCircle} className="mr-1.5" />
+                Xem
               </button>
-              <button className="p-2 rounded-lg border-2 border-gray-600 text-gray-400 hover:bg-gray-700 hover:text-white transition-colors">
+              <button className="rounded-lg border-2 border-gray-600 p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white">
                 <FontAwesomeIcon icon={faHeart} />
               </button>
-              <button className="p-2 rounded-lg border-2 border-gray-600 text-gray-400 hover:bg-gray-700 hover:text-white transition-colors">
+              <button className="rounded-lg border-2 border-gray-600 p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white">
                 <FontAwesomeIcon icon={faInfoCircle} />
               </button>
             </div>
 
-            {/* Thông tin phụ dựa trên dữ liệu TMDB */}
-            <div className="flex items-center text-xs text-gray-400 space-x-2 mb-2">
+            {/* Thông tin phụ */}
+            <div className="flex items-center space-x-2 text-xs text-gray-400">
               {movieDetails.rating && (
-                <span className="bg-yellow-500 text-black px-1 rounded font-semibold">
-                  TMDB {movieDetails.rating}
+                <span className="font-semibold text-green-400">
+                  {movieDetails.rating} Điểm
                 </span>
               )}
               {movieDetails.year && <span>{movieDetails.year}</span>}
-              {movieDetails.votes !== null && (
-                <span className="border border-gray-600 px-1 rounded">
-                  {movieDetails.votes} votes
-                </span>
-              )}
             </div>
-
-            {/* Mô tả ngắn */}
           </div>
-        </div>
-
-        {/* Phần hiển thị ban đầu (chỉ ảnh poster) - giữ nguyên để ẩn/hiện */}
-        <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0">
-          <img
-            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-            alt={movieDetails.title}
-            className="w-full h-full object-cover rounded-lg"
-          />
         </div>
       </div>
     </div>

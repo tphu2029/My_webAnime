@@ -153,17 +153,21 @@ const Footer = () => {
         </div>
 
         {/* Description */}
-        <div className="mb-5 flex justify-between items-center">
-          <p className="text-gray-300 text-sm leading-relaxed max-w-full">
+        <div
+          className="
+                      mb-5 flex items-start gap-4 
+                      md:flex-row md:items-center md:justify-between
+                    "
+        >
+          <p className="max-w-full text-sm leading-relaxed text-gray-300">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos facere
             aliquam, cupiditate iure beatae in nemo, voluptates nam ducimus ut
             veritatis suscipit? Qui eaque hic perspiciatis, possimus tempora
             reprehenderit nesciunt!
           </p>
 
-          {/* Copyright và scroll to top */}
           <button
-            className="w-10 h-10  hover:bg-gray-400 bg-white border-none rounded text-black cursor-pointer flex items-center justify-center transition-colors"
+            className="self-end flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded border-none bg-white text-black transition-colors hover:bg-gray-400"
             onClick={scrollToTop}
             title="Lên đầu trang"
           >

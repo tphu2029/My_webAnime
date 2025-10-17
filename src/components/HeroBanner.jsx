@@ -89,7 +89,7 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
 
   if (loading) {
     return (
-      <section className="rounded-2xl bg-gray-900 h-[320px] md:h-[420px] lg:h-[520px] animate-pulse" />
+      <section className="h-[50vh] animate-pulse rounded-2xl bg-gray-900 md:h-[420px] lg:h-[520px]" />
     );
   }
   if (error || !item) {
@@ -115,13 +115,13 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
       <div className="absolute inset-0 bg-gradient-to-r from-gray-950/95 via-gray-950/70 to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 px-6 md:px-10 lg:px-14 py-8 md:py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+      <div className="relative z-10 grid grid-cols-1 items-center gap-6 px-4 py-8 md:px-10 md:py-12 lg:grid-cols-2 lg:px-14 lg:py-16">
         {/* Left block: text */}
         <div className="max-w-2xl text-white">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold drop-shadow-sm mb-3 line-clamp-1">
+          <h1 className="mb-3 line-clamp-2 text-3xl font-extrabold drop-shadow-sm md:text-4xl lg:text-5xl">
             {titleOf(item)}
           </h1>
-          <p className="text-sm md:text-base text-gray-300 mb-4 line-clamp-1">
+          <p className="mb-4 line-clamp-1 text-sm text-gray-300 md:text-base">
             {subTitleOf(item)}
           </p>
 
@@ -206,8 +206,9 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
 
       {/* Related posters row */}
       {relatedItems.length > 0 && (
-        <div className="relative z-10 px-6 md:px-10 lg:px-14 pb-6">
-          <div className="flex gap-4 overflow-x-hidden whitespace-nowrap justify-center">
+        <div className="relative z-10 px-4 pb-6 md:px-10 lg:px-14">
+          {/* ✨ Cho phép trượt ngang trên mobile/tablet và ẩn thanh cuộn */}
+          <div className="flex gap-3 overflow-x-auto whitespace-nowrap scrollbar-hide md:gap-4 lg:justify-center">
             {relatedItems.map((ri, idx) => {
               const src = ri.poster_path
                 ? `${IMG_W185}${ri.poster_path}`
@@ -216,7 +217,7 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
                 <button
                   key={`${ri.media_type || "item"}-${ri.id}`}
                   type="button"
-                  className={`shrink-0 focus:outline-none rounded-xl border-2 ${
+                  className={`shrink-0 rounded-xl border-2 focus:outline-none ${
                     items[activeIndex]?.id === ri.id
                       ? "border-yellow-500"
                       : "border-transparent"
@@ -230,10 +231,11 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
                     <img
                       src={src}
                       alt={titleOf(ri)}
-                      className="w-[110px] h-[168px] md:w-[120px] md:h-[180px] object-cover rounded-[10px] shadow"
+                      // ✨ Tinh chỉnh kích thước poster responsive
+                      className="h-[150px] w-[100px] rounded-[10px] object-cover shadow md:h-[180px] md:w-[120px]"
                     />
                   ) : (
-                    <div className="w-[110px] h-[168px] md:w-[120px] md:h-[180px] rounded-[10px] bg-gray-700" />
+                    <div className="h-[150px] w-[100px] rounded-[10px] bg-gray-700 md:h-[180px] md:w-[120px]" />
                   )}
                 </button>
               );
