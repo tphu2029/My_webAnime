@@ -88,7 +88,12 @@ const CategoryPage = () => {
         apiUrl = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&with_genres=16&sort_by=popularity.desc&page=${page}`;
       } else if (currentPath.startsWith("/phim-chieu-rap")) {
         pageTitle = "Anime Chiếu Rạp";
-        apiUrl = `https://api.themoviedb.org/3/movie/now_playing?language=vi-VN&with_genres=16&page=${page}`;
+        const today = new Date();
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(today.getMonth() - 12);
+        const todayString = today.toISOString().split("T")[0];
+        const oneMonthAgoString = oneMonthAgo.toISOString().split("T")[0];
+        apiUrl = `https://api.themoviedb.org/3/discover/movie?language=vi-VN&with_genres=16&with_keywords=210024&primary_release_date.gte=${oneMonthAgoString}&primary_release_date.lte=${todayString}&sort_by=popularity.desc&page=${page}`;
       } else if (currentPath.startsWith("/nam")) {
         pageTitle = `Anime năm ${year}`;
         apiUrl = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&with_genres=16&first_air_date_year=${year}&sort_by=popularity.desc&page=${page}`;
