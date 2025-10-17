@@ -27,6 +27,9 @@ function Header() {
   // THÊM STATE CHO MENU DI ĐỘNG
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const handleMobileLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
   const ANIME_GENRES = [
     // Demographics & Tropes
     { name: "Shounen", slug: "shounen" },
@@ -380,24 +383,27 @@ function Header() {
             <span>Đăng nhập</span>
           </a>
 
-          <a
-            href="#"
+          <Link
+            to="/phim-le"
+            onClick={handleMobileLinkClick}
             className="text-lg py-2 text-gray-200 hover:text-yellow-400"
           >
             Phim Lẻ
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/phim-bo"
+            onClick={handleMobileLinkClick}
             className="text-lg py-2 text-gray-200 hover:text-yellow-400"
           >
             Phim Bộ
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/phim-chieu-rap"
+            onClick={handleMobileLinkClick}
             className="text-lg py-2 text-gray-200 hover:text-yellow-400"
           >
             Phim chiếu rạp
-          </a>
+          </Link>
 
           <div className="mt-4 pt-4 border-t border-gray-700">
             <h3 className="text-gray-400 font-bold mb-2">Thể Loại</h3>
