@@ -110,7 +110,7 @@ const CategoryPage = () => {
         if (!response.ok) throw new Error("Không thể tải dữ liệu");
 
         const data = await response.json();
-
+        // logic loai bo phim trung lap
         setMovies((prevMovies) => {
           // 1. Gộp danh sách phim cũ và mới
           const combinedMovies = [...prevMovies, ...data.results];
