@@ -119,7 +119,7 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
       <div className="relative z-10 grid grid-cols-1 items-center gap-6 px-4 py-8 md:px-10 md:py-12 lg:grid-cols-2 lg:px-14 lg:py-16">
         {/* Left block: text */}
         <div className="max-w-2xl text-white">
-          <h1 className="mb-3 line-clamp-2 text-3xl font-extrabold drop-shadow-sm md:text-4xl lg:text-5xl">
+          <h1 className="mb-3 text-3xl font-extrabold drop-shadow-sm md:text-4xl lg:text-5xl line-clamp-1">
             {titleOf(item)}
           </h1>
           <p className="mb-4 line-clamp-1 text-sm text-gray-300 md:text-base">
