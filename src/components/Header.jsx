@@ -275,13 +275,14 @@ function Header() {
                   className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-3 gap-x-6 gap-y-2 w-max min-w-[500px]"
                 >
                   {genres.map((genre) => (
-                    <a
+                    <Link
                       key={genre.slug}
-                      href={`/the-loai/anime/${genre.slug}`}
+                      to={`/the-loai/anime/${genre.slug}`}
+                      onClick={() => setIsGenreOpen(false)} // Thêm cái này để đóng menu sau khi click
                       className="px-2 py-1 text-sm whitespace-nowrap text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
                     >
                       {genre.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}

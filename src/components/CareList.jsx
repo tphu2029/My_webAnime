@@ -33,7 +33,6 @@ const CareList = ({ type }) => {
           urls = [urlAnime, urlAnimePage2, urlAnimePage3];
         } else if (type === "anime2") {
           // Thêm các URL khác cho thể loại mới
-          // Ví dụ: Lấy phim bộ Hàn Quốc
           urls = [
             "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=60",
             "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=80",
@@ -52,7 +51,7 @@ const CareList = ({ type }) => {
 
         const combinedData = results.flatMap((res) => res.results);
 
-        // Loại bỏ phim trùng lặp (nếu cần)
+        // Loại bỏ phim trùng lặp
         const uniqueData = Array.from(
           new Set(combinedData.map((item) => item.id))
         ).map((id) => combinedData.find((item) => item.id === id));
@@ -85,7 +84,6 @@ const CareList = ({ type }) => {
                 .sort((a, b) => b.vote_average - a.vote_average)
                 .slice(0, 20),
             },
-            // Thêm các thể loại Drama Hàn khác
           ];
         }
 
@@ -99,7 +97,7 @@ const CareList = ({ type }) => {
     };
 
     fetchData();
-  }, [type]); // Thêm 'type' vào dependency array để component re-render khi type thay đổi
+  }, [type]);
 
   if (loading) {
     return (

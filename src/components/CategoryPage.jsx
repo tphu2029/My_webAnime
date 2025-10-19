@@ -81,13 +81,13 @@ const CategoryPage = () => {
         pageTitle = `Thể loại: ${genreInfo.name}`;
         apiUrl = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&with_genres=16,${genreInfo.id}&sort_by=popularity.desc&page=${page}`;
       } else if (currentPath.startsWith("/phim-le")) {
-        pageTitle = "Phim Lẻ Anime";
+        pageTitle = "Phim Lẻ";
         apiUrl = `https://api.themoviedb.org/3/discover/movie?language=vi-VN&with_genres=16&sort_by=popularity.desc&page=${page}`;
       } else if (currentPath.startsWith("/phim-bo")) {
-        pageTitle = "Phim Bộ Anime";
+        pageTitle = "Phim Bộ";
         apiUrl = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&with_genres=16&sort_by=popularity.desc&page=${page}`;
       } else if (currentPath.startsWith("/phim-chieu-rap")) {
-        pageTitle = "Anime Chiếu Rạp";
+        pageTitle = "Phim Chiếu Rạp";
         const today = new Date();
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(today.getMonth() - 12);
@@ -112,16 +112,16 @@ const CategoryPage = () => {
         const data = await response.json();
         // logic loai bo phim trung lap
         setMovies((prevMovies) => {
-          // 1. Gộp danh sách phim cũ và mới
+          // Gộp danh sách phim cũ và mới
           const combinedMovies = [...prevMovies, ...data.results];
 
-          // 2. Dùng Map để tự động xử lý trùng lặp dựa trên movie.id
+          // Dùng Map để tự động xử lý trùng lặp dựa trên movie.id
           const movieMap = new Map();
           combinedMovies.forEach((movie) => {
             movieMap.set(movie.id, movie); // Nếu id đã tồn tại, nó sẽ tự động được ghi đè
           });
 
-          // 3. Chuyển Map trở lại thành một mảng duy nhất
+          // Chuyển Map trở lại thành một mảng duy nhất
           return Array.from(movieMap.values());
         });
 

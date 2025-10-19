@@ -115,19 +115,19 @@ const BannerList = () => {
                 </p>
 
                 {/* Các nút bấm */}
-                {/* ✨ 3. Khoảng cách nút: space-x-6 cho mobile, space-x-8 từ tablet */}
+                {/*  Khoảng cách nút: space-x-6 cho mobile, space-x-8 từ tablet */}
                 <div className="flex items-center space-x-6 md:space-x-8">
                   <a href="#Intro">
                     <FontAwesomeIcon
                       icon={faCirclePlay}
-                      // ✨ 4. Kích thước icon: text-6xl cho mobile, text-7xl từ tablet
+                      // Kích thước icon: text-6xl cho mobile, text-7xl từ tablet
                       className="cursor-pointer text-6xl transition-colors duration-200 hover:text-red-500 md:text-7xl"
                     />
                   </a>
                   <div className="flex items-center space-x-4">
                     <FontAwesomeIcon
                       icon={faHeart}
-                      // ✨ 5. Kích thước icon: text-3xl cho mobile, text-4xl từ tablet
+                      // Kích thước icon: text-3xl cho mobile, text-4xl từ tablet
                       className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
                     />
                     <FontAwesomeIcon

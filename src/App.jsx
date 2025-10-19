@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/Layout";
 import HomePage from "./components/HomePage";
-import CategoryPage from "./components/CategoryPage"; // Đổi đường dẫn nếu bạn chuyển file
+import CategoryPage from "./components/CategoryPage";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
           {/* Khi URL là '/', hiển thị trang chủ */}
           <Route index element={<HomePage />} />
 
-          {/* 👇 TẤT CẢ CÁC ROUTE NÀY GIỜ ĐỀU DÙNG CHUNG 'CategoryPage' */}
+          {/*TẤT CẢ CÁC ROUTE NÀY GIỜ ĐỀU DÙNG CHUNG 'CategoryPage' */}
           <Route path="/the-loai/anime/:genreSlug" element={<CategoryPage />} />
           <Route path="/phim-le" element={<CategoryPage />} />
           <Route path="/phim-bo" element={<CategoryPage />} />
