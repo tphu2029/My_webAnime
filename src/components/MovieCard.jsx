@@ -5,6 +5,7 @@ import {
   faHeart,
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -25,23 +26,40 @@ const MovieCard = ({ movie }) => {
     overview: movie.overview || "",
   };
 
+  const mediaType = movie.title ? "movie" : "tv";
+
   return (
     <div className="group relative w-full cursor-pointer overflow-hidden rounded-lg bg-gray-900 shadow-md transition-transform duration-300 hover:scale-105">
-      {/* Container chính của card, dùng aspect-ratio [2/3] giống poster phim */}
+      {/* Container chính của card, dùng aspect-ratio [2/3] */}
       <div className="aspect-[2/3]">
-        {/* Phần hiển thị ban đầu (chỉ ảnh poster) */}
-
-        <div className="absolute inset-0 transition-opacity duration-300 lg:group-hover:opacity-0">
+        {/* === 1. VÙNG LINK CHO MOBILE === */}
+        {/* Link này bao trọn thẻ, hiển thị poster, và BIẾN MẤT trên desktop (lg:hidden) */}
+        <Link
+          to={`/${mediaType}/${movie.id}`}
+          className="absolute inset-0 lg:hidden" // Chỉ hoạt động trên mobile
+        >
           <img
             src={`${IMAGE_BASE_URL}${movie.poster_path}`}
             alt={movieDetails.title}
             className="h-full w-full object-cover"
           />
-          {/* Lớp phủ tối nhẹ trên poster cho đẹp hơn */}
+          <div className="absolute inset-0 bg-black/10"></div>
+        </Link>
+
+        {/* === 2. VÙNG POSTER CHO DESKTOP (KHÔNG CÓ LINK) === */}
+        {/* Vùng này chỉ để hiển thị, sẽ bị che bởi hover zone khi hover */}
+        <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0 hidden lg:block">
+          {" "}
+          {/* Chỉ hoạt động trên desktop */}
+          <img
+            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+            alt={movieDetails.title}
+            className="h-full w-full object-cover"
+          />
           <div className="absolute inset-0 bg-black/10"></div>
         </div>
 
-        {/* --- PHẦN CHI TIẾT KHI HOVER (CHỈ HIỆN TRÊN DESKTOP) --- */}
+        {/* === 3. PHẦN CHI TIẾT KHI HOVER (CHỈ HIỆN TRÊN DESKTOP) === */}
         <div
           className="
             absolute inset-0 flex-col overflow-hidden bg-gray-900 
@@ -70,16 +88,26 @@ const MovieCard = ({ movie }) => {
 
             {/* Các nút bấm */}
             <div className="flex items-center space-x-2">
-              <button className="flex flex-1 items-center justify-center rounded-lg bg-yellow-500 px-3 py-1.5 text-xs font-semibold text-black transition-colors hover:bg-yellow-600">
-                <FontAwesomeIcon icon={faPlayCircle} className="mr-1.5" />
-                Xem
-              </button>
+              {/* Nút Play (đã sửa) */}
+              <Link
+                to={`/${mediaType}/${movie.id}/trailer`}
+                className="flex flex-1"
+              >
+                <button className="flex w-full items-center justify-center rounded-lg bg-yellow-500 px-3 py-1.5 text-xs font-semibold text-black transition-colors hover:bg-yellow-600">
+                  <FontAwesomeIcon icon={faPlayCircle} className="mr-1.5" />
+                  Xem
+                </button>
+              </Link>
+              {/* Nút Heart */}
               <button className="rounded-lg border-2 border-gray-600 p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white">
                 <FontAwesomeIcon icon={faHeart} />
               </button>
-              <button className="rounded-lg border-2 border-gray-600 p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white">
-                <FontAwesomeIcon icon={faInfoCircle} />
-              </button>
+              {/* Nút Info */}
+              <Link to={`/${mediaType}/${movie.id}`}>
+                <button className="rounded-lg border-2 border-gray-600 p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white">
+                  <FontAwesomeIcon icon={faInfoCircle} />
+                </button>
+              </Link>
             </div>
 
             {/* Thông tin phụ */}
