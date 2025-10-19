@@ -5,6 +5,7 @@ import {
   faHeart,
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 const IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 const IMG_W185 = "https://image.tmdb.org/t/p/w185";
@@ -157,14 +158,17 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
 
           {/* Actions */}
           <div className="flex items-center gap-3 mb-6">
-            <button
-              type="button"
-              onClick={onPlay}
-              className="flex items-center gap-2 px-5 py-3 rounded-full bg-yellow-500 text-black font-bold hover:bg-yellow-400 transition-colors"
-            >
-              <FontAwesomeIcon icon={faPlay} />
-              Xem ngay
-            </button>
+            <Link to={`/tv/${item.id}/trailer`}>
+              <button
+                type="button"
+                onClick={onPlay}
+                className="flex items-center gap-2 px-5 py-3 rounded-full bg-yellow-500 text-black font-bold hover:bg-yellow-400 transition-colors"
+              >
+                <FontAwesomeIcon icon={faPlay} />
+                Xem ngay
+              </button>
+            </Link>
+
             <button
               type="button"
               onClick={() => onFavorite && onFavorite(item)}
@@ -173,14 +177,18 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
             >
               <FontAwesomeIcon icon={faHeart} />
             </button>
-            <button
-              type="button"
-              onClick={() => onInfo && onInfo(item)}
-              className="w-11 h-11 rounded-full border-2 border-gray-500/70 text-gray-300 hover:bg-gray-700 hover:text-white transition"
-              aria-label="Thông tin"
-            >
-              <FontAwesomeIcon icon={faInfoCircle} />
-            </button>
+
+            <Link to={`/tv/${item.id}`}>
+              {" "}
+              <button
+                type="button"
+                onClick={() => onInfo && onInfo(item)}
+                className="w-11 h-11 rounded-full border-2 border-gray-500/70 text-gray-300 hover:bg-gray-700 hover:text-white transition"
+                aria-label="Thông tin"
+              >
+                <FontAwesomeIcon icon={faInfoCircle} />
+              </button>
+            </Link>
           </div>
 
           {/* Tags từ genre_ids → tên thể loại */}

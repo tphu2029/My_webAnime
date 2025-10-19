@@ -7,6 +7,7 @@ import {
   faHeart,
   faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 // --- TMDB CONFIGURATION ---
 const API_URL = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&without_genres=10751,35&page=1`;
@@ -117,23 +118,26 @@ const BannerList = () => {
                 {/* Các nút bấm */}
                 {/*  Khoảng cách nút: space-x-6 cho mobile, space-x-8 từ tablet */}
                 <div className="flex items-center space-x-6 md:space-x-8">
-                  <a href="#Intro">
+                  <Link to={`/tv/${movie.id}/trailer`}>
                     <FontAwesomeIcon
                       icon={faCirclePlay}
                       // Kích thước icon: text-6xl cho mobile, text-7xl từ tablet
                       className="cursor-pointer text-6xl transition-colors duration-200 hover:text-red-500 md:text-7xl"
                     />
-                  </a>
+                  </Link>
                   <div className="flex items-center space-x-4">
                     <FontAwesomeIcon
                       icon={faHeart}
                       // Kích thước icon: text-3xl cho mobile, text-4xl từ tablet
                       className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
                     />
-                    <FontAwesomeIcon
-                      icon={faCircleInfo}
-                      className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
-                    />
+                    <Link to={`/tv/${movie.id}`}>
+                      {" "}
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
+                      />
+                    </Link>
                   </div>
                 </div>
               </div>
