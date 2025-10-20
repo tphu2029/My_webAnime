@@ -91,7 +91,7 @@ const BannerList = () => {
               className="absolute inset-0 z-0 h-full w-full object-cover"
             />
             {/* Lớp phủ */}
-            <div className="absolute inset-0 z-10 bg-black opacity-50"></div>
+            <div className="absolute inset-0 z-10 bg-black opacity-20"></div>
             <div className="absolute inset-0 z-20 bg-gradient-to-r from-gray-950/70 via-transparent to-transparent"></div>
 
             {/* Container nội dung */}
@@ -101,7 +101,7 @@ const BannerList = () => {
                   {movie.original_name || movie.original_title || movie.name}
                 </p>
                 <h1
-                  // ✨ 2. Kích thước tiêu đề: text-3xl cho mobile, to dần ra trên màn hình lớn
+                  // Kích thước tiêu đề: text-3xl cho mobile, to dần ra trên màn hình lớn
                   className="mb-4 line-clamp-2 text-3xl font-extrabold text-shadow-2xs shadow-stone-950 md:text-4xl lg:text-5xl"
                 >
                   {movie.name || movie.title}

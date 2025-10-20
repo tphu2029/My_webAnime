@@ -1,6 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import login_img from "../assets/img/img_login.jpg";
+import login_img from "../../assets/img/img_login.jpg";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 function LoginModal({ isOpen, onClose }) {
