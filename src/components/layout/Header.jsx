@@ -177,9 +177,12 @@ function Header() {
       <header className="sticky top-0 z-50 p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
         {/* PHẦN 1: LOGO */}
         <div className="flex items-center">
-          <a href="/">
+          <Link
+            to="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <img src={logo} alt="logo" className="h-10 sm:h-12 w-auto" />
-          </a>
+          </Link>
         </div>
 
         {/* PHẦN 2: SEARCH - Chiếm không gian linh hoạt trên mobile/tablet/desktop */}
@@ -327,13 +330,13 @@ function Header() {
                   className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-2 gap-x-6 gap-y-2 w-max min-w-[200px]"
                 >
                   {years.map((year) => (
-                    <a
+                    <Link
                       key={year}
-                      href={`/nam/${year}`}
+                      to={`/nam/${year}`}
                       className="px-2 py-1 text-sm whitespace-nowrap text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
                     >
                       {year}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -371,9 +374,9 @@ function Header() {
       >
         {/* Header của menu */}
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
-          <a href="/" onClick={() => setIsMobileMenuOpen(false)}>
+          <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
             <img src={logo} alt="logo" className="h-10 w-auto" />
-          </a>
+          </Link>
           <button onClick={() => setIsMobileMenuOpen(false)}>
             <FontAwesomeIcon icon={faTimes} className="w-6 h-6 text-white" />
           </button>
