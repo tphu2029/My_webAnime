@@ -219,10 +219,17 @@ function Header() {
                     ? `https://image.tmdb.org/t/p/w92${item.poster_path}`
                     : null;
                   return (
-                    <a
+                    <Link
                       key={`${item.media_type}-${item.id}`}
-                      href="#"
+                      // 1. Dẫn link tới trang chi tiết phim/show
+                      //    URL sẽ có dạng /movie/12345 hoặc /tv/67890
+                      to={`/${item.media_type}/${item.id}`}
                       className="flex items-center gap-3 px-3 py-2 hover:bg-gray-700"
+                      // 2. Thêm onClick để đóng box tìm kiếm và xóa chữ
+                      onClick={() => {
+                        setIsSearchOpen(false);
+                        setSearchQuery("");
+                      }}
                     >
                       {img ? (
                         <img
@@ -242,7 +249,7 @@ function Header() {
                           {item.media_type === "movie" ? "Phim lẻ" : "Phim bộ"}
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   );
                 })}
               {!isSearching &&
