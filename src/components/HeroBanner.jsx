@@ -47,14 +47,11 @@ function subTitleOf(item) {
 
 // Hero banner: tự fetch anime nổi bật
 // Props tuỳ chọn: onPlay, onFavorite, onInfo
-const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
+const HeroBanner = ({ fetchUrl, onPlay, onFavorite, onInfo }) => {
   const [items, setItems] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const url =
-    "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=30";
 
   useEffect(() => {
     const controller = new AbortController();
@@ -62,7 +59,7 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
       try {
         setLoading(true);
         const apiKey = import.meta.env.VITE_API_KEY;
-        const res = await fetch(url, {
+        const res = await fetch(fetchUrl, {
           headers: {
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json;charset=utf-8",
@@ -81,9 +78,15 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
         setLoading(false);
       }
     };
+    if (fetchUrl) {
+      fetchData();
+    } else {
+      setLoading(false);
+      setError("No fetch URL provided");
+    }
     fetchData();
     return () => controller.abort();
-  }, []);
+  }, [fetchUrl]);
 
   const item = useMemo(() => items[activeIndex], [items, activeIndex]);
   const relatedItems = useMemo(() => (items || []).slice(0, 10), [items]);
@@ -102,7 +105,7 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
   const year = formatYear(item);
 
   return (
-    <section className="relative h-auto pb-4 overflow-hidden bg-gray-900">
+    <section className="relative h-auto pb-4 overflow-hidden bg-gray-900 ">
       {/* Background */}
       <div
         className="absolute inset-0"
@@ -212,7 +215,6 @@ const HeroBanner = ({ onPlay, onFavorite, onInfo }) => {
         <div className="hidden lg:block" />
       </div>
 
-      {/* Related posters row */}
       {relatedItems.length > 0 && (
         <div className="relative z-10 px-4 pb-6 md:px-10 lg:px-14">
           {/* Cho phép trượt ngang trên mobile/tablet và ẩn thanh cuộn */}

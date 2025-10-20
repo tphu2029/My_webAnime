@@ -37,6 +37,11 @@ const CareList = ({ type }) => {
             "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=60",
             "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=80",
           ];
+        } else if (type === "anime3") {
+          urls = [
+            "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=100",
+            "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=120",
+          ];
         } else {
           // Xử lý trường hợp không có loại phù hợp
           setData([]);
@@ -80,6 +85,19 @@ const CareList = ({ type }) => {
             },
             {
               title: "Anime Của Năm",
+              movies: uniqueData
+                .sort((a, b) => b.vote_average - a.vote_average)
+                .slice(0, 20),
+            },
+          ];
+        } else if (type === "anime3") {
+          loadedData = [
+            {
+              title: "Anime Hot",
+              movies: uniqueData.slice(0, 20),
+            },
+            {
+              title: "Xu Hướng",
               movies: uniqueData
                 .sort((a, b) => b.vote_average - a.vote_average)
                 .slice(0, 20),
