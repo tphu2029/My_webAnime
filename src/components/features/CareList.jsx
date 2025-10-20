@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import ExpandableAnimeRow from "../components/ExpandableAnimeRow";
+
+import ExpandableAnimeRow from "./ExpandableAnimeRow";
 
 const urlAnime =
   "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=1";

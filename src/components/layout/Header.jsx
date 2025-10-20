@@ -9,8 +9,8 @@ import {
   faBars,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import logo from "../assets/img/logo.png";
-import LoginModal from "./LoginModal";
+import logo from "../../assets/img/logo.png";
+import LoginModal from "../ui/LoginModal";
 
 function Header() {
   const [isGenreOpen, setIsGenreOpen] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MovieCard from "./MovieCard";
+import MovieCard from "../ui/MovieCard";
 
 const INITIAL_VISIBLE_COUNT = 5; // Số phim hiển thị ban đầu trên desktop
 

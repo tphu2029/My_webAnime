@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import MovieCard from "./MovieCard";
+import MovieCard from "../ui/MovieCard";
 
 // --- CẤU HÌNH API ---
 const apiKey = import.meta.env.VITE_API_KEY;

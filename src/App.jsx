@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import HomePage from "./components/HomePage";
-import CategoryPage from "./components/CategoryPage";
-import ScrollToTop from "./components/ScrollToTop";
-import MovieDetailPage from "./components/MovieDetailPage";
-import WatchPage from "./components/WatchPage";
+import Layout from "./components/layout/Layout";
+import HomePage from "./components/pages/HomePage";
+import CategoryPage from "./components/pages/CategoryPage";
+import ScrollToTop from "./components/ui/ScrollToTop";
+import MovieDetailPage from "./components/pages/MovieDetailPage";
+import WatchPage from "./components/pages/WatchPage";
 function App() {
   return (
     <BrowserRouter>

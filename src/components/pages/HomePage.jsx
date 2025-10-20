@@ -1,7 +1,7 @@
 import React from "react";
-import BannerList from "../components/BannerList";
-import CareList from "../components/CareList";
-import HeroBanner from "../components/HeroBanner";
+import BannerList from "../features/BannerList";
+import CareList from "../features/CareList";
+import HeroBanner from "../features/HeroBanner";
 
 const API_BASE =
   "https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16";
