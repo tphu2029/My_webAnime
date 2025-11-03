@@ -1,21 +1,18 @@
 {
   "builds": [
     {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "client/dist"
-      }
+      "src": "server/index.js", // Hoặc file entry point của server của bạn
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "client/dist/index.html"
+      "src": "/api/(.*)", // Định tuyến mọi request đến /api/xxx qua server/index.js
+      "dest": "server/index.js"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "server/api/index.js"
+      "src": "/(.*)", // Định tuyến mọi request còn lại đến frontend đã build (client/dist)
+      "dest": "client/dist/$1"
     }
   ]
 }
