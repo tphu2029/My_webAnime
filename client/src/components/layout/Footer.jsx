@@ -21,7 +21,6 @@ const Footer = () => {
 
   return (
     <footer className="bg-black text-white min-h-96 relative pt-8 ">
-      {/* Banner đỏ */}
       <div className="bg-red-600 rounded-2xl w-80  text-white px-4 py-2 mx-4 mt-0 mb-4 flex items-center gap-2">
         <span className="text-white text-base">★</span>
         <span className="text-sm font-medium">

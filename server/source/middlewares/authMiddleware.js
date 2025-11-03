@@ -12,7 +12,7 @@ export const protectedRoute = async (req, res, next) => {
       return res.status(401).json({ message: "No token provided." });
     }
 
-    // Verify token (dùng await, không dùng callback)
+    // Verify token
     // Nếu token lỗi, nó sẽ tự động nhảy xuống khối catch
     const decodedUser = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
@@ -22,7 +22,7 @@ export const protectedRoute = async (req, res, next) => {
     );
 
     if (!user) {
-      // Token hợp lệ nhưng user không còn tồn tại (ví dụ: đã bị xóa)
+      // Token hợp lệ nhưng user không còn tồn tại
       return res.status(404).json({ message: "User not found." });
     }
 

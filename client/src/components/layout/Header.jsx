@@ -8,9 +8,16 @@ import {
   faCaretDown,
   faBars,
   faTimes,
+  faSignOutAlt, // THÊM MỚI: Icon đăng xuất
+  faHeart, // THÊM MỚI: Icon yêu thích
+  faList, // THÊM MỚI: Icon danh sách
+  faHistory, // THÊM MỚI: Icon xem tiếp
+  faUserCircle, // THÊM MỚI: Icon tài khoản
+  faBell, // THÊM MỚI: Icon chuông
 } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../assets/img/logo.png";
 import LoginModal from "../ui/LoginModal";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
   const [isGenreOpen, setIsGenreOpen] = useState(false);
@@ -22,21 +29,17 @@ function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [genres, setGenres] = useState([]);
   const [years, setYears] = useState([]);
-
-  // THÊM STATE CHO MENU DI ĐỘNG
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleMobileLinkClick = () => {
-    setIsMobileMenuOpen(false);
-  };
+  // State và Context cho menu người dùng
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { authUser, logout } = useAuth();
+
   const ANIME_GENRES = [
-    // Demographics & Tropes
     { name: "Shounen", slug: "shounen" },
     { name: "Shoujo", slug: "shoujo" },
     { name: "Seinen", slug: "seinen" },
     { name: "Isekai", slug: "isekai" },
-
-    // Standard Genres
     { name: "Hành động & Phiêu lưu", slug: "action" },
     { name: "Hài hước", slug: "comedy" },
     { name: "Lãng mạn", slug: "romance" },
@@ -50,13 +53,14 @@ function Header() {
   const genreRef = useRef(null);
   const yearRef = useRef(null);
   const searchRef = useRef(null);
-
+  const userMenuRef = useRef(null);
   const openLoginModal = (e) => {
     e.preventDefault();
     setIsModalOpen(true);
     setIsMobileMenuOpen(false);
     setIsGenreOpen(false);
     setIsYearOpen(false);
+    setIsUserMenuOpen(false);
   };
 
   const closeLoginModal = () => {
@@ -67,27 +71,36 @@ function Header() {
     e.preventDefault();
     setIsGenreOpen(!isGenreOpen);
     setIsYearOpen(false);
+    setIsUserMenuOpen(false);
   };
 
   const toggleYearMenu = (e) => {
     e.preventDefault();
     setIsYearOpen(!isYearOpen);
     setIsGenreOpen(false);
+    setIsUserMenuOpen(false);
   };
 
-  // Ngăn cuộn trang khi menu di động mở
+  // Hàm bật/tắt menu người dùng
+  const toggleUserMenu = (e) => {
+    e.preventDefault();
+    setIsUserMenuOpen(!isUserMenuOpen);
+    setIsGenreOpen(false);
+    setIsYearOpen(false);
+  };
+
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
-    // Cleanup function
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [isMobileMenuOpen]);
 
+  //đóng menu khi click ra ngoài
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -111,13 +124,22 @@ function Header() {
       ) {
         setIsSearchOpen(false);
       }
+      // đóng menu người dùng
+      if (
+        isUserMenuOpen &&
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target)
+      ) {
+        setIsUserMenuOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isGenreOpen, isYearOpen, isSearchOpen]);
+  }, [isGenreOpen, isYearOpen, isSearchOpen, isUserMenuOpen]);
 
+  // useEffect tìm kiếm
   useEffect(() => {
     const controller = new AbortController();
     const timeout = setTimeout(async () => {
@@ -163,6 +185,7 @@ function Header() {
     };
   }, [searchQuery]);
 
+  // useEffect load Năm và Thể loại
   useEffect(() => {
     const now = new Date().getFullYear();
     const yrs = [];
@@ -172,10 +195,21 @@ function Header() {
     return () => {};
   }, []);
 
+  const handleMobileLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  // Hàm xử lý đăng xuất
+  const handleLogout = () => {
+    logout();
+    setIsUserMenuOpen(false);
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
-        {/* PHẦN 1: LOGO */}
+        {/*  LOGO  */}
         <div className="flex items-center">
           <Link
             to="/"
@@ -185,7 +219,7 @@ function Header() {
           </Link>
         </div>
 
-        {/* PHẦN 2: SEARCH - Chiếm không gian linh hoạt trên mobile/tablet/desktop */}
+        {/*  SEARCH */}
         <div
           ref={searchRef}
           className="relative flex-1  lg:flex-none  lg:w-[240px] xl:w-[500px] mx-4"
@@ -204,6 +238,7 @@ function Header() {
           />
           {isSearchOpen && (searchResults.length > 0 || isSearching) && (
             <div className="absolute top-full mt-2 left-0 right-0 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 max-h-96 overflow-auto">
+              {/* kết quả tìm kiếm  */}
               {isSearching && (
                 <div className="px-4 py-3 text-sm text-gray-300">
                   Đang tìm...
@@ -223,11 +258,8 @@ function Header() {
                   return (
                     <Link
                       key={`${item.media_type}-${item.id}`}
-                      // 1. Dẫn link tới trang chi tiết phim/show
-                      //    URL sẽ có dạng /movie/12345 hoặc /tv/67890
                       to={`/${item.media_type}/${item.id}`}
                       className="flex items-center gap-3 px-3 py-2 hover:bg-gray-700"
-                      // 2. Thêm onClick để đóng box tìm kiếm và xóa chữ
                       onClick={() => {
                         setIsSearchOpen(false);
                         setSearchQuery("");
@@ -265,9 +297,9 @@ function Header() {
           )}
         </div>
 
-        {/*  MENU DESKTOP & NÚT ĐĂNG NHẬP */}
+        {/* MENU DESKTOP & NÚT ĐĂNG NHẬP / AVATAR */}
         <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
-          {/* MENU DESKTOP */}
+          {/* MENU DESKTOP  */}
           <nav className="relative flex items-center space-x-6">
             <div className="relative">
               <a
@@ -287,7 +319,7 @@ function Header() {
                     <Link
                       key={genre.slug}
                       to={`/the-loai/anime/${genre.slug}`}
-                      onClick={() => setIsGenreOpen(false)} // Thêm cái này để đóng menu sau khi click
+                      onClick={() => setIsGenreOpen(false)}
                       className="px-2 py-1 text-sm whitespace-nowrap text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
                     >
                       {genre.name}
@@ -333,6 +365,7 @@ function Header() {
                     <Link
                       key={year}
                       to={`/nam/${year}`}
+                      onClick={() => setIsYearOpen(false)}
                       className="px-2 py-1 text-sm whitespace-nowrap text-gray-200 hover:bg-gray-700 hover:text-yellow-400 rounded-sm transition duration-150"
                     >
                       {year}
@@ -342,16 +375,94 @@ function Header() {
               )}
             </div>
           </nav>
-          {/* USER DESKTOP */}
-          <div className="flex items-center text-sm font-semibold">
-            <a
-              href="#"
-              onClick={openLoginModal}
-              className="flex items-center space-x-2 py-2 px-4 bg-white text-gray-900 font-bold rounded-full shadow-lg transition duration-200 hover:bg-gray-200"
-            >
-              <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
-              <span>Đăng nhập</span>
-            </a>
+
+          {/* USER DESKTOP  */}
+          <div className="relative flex items-center text-sm font-semibold">
+            {authUser ? (
+              // === NẾU ĐÃ ĐĂNG NHẬP ===
+              <div ref={userMenuRef}>
+                <button
+                  onClick={toggleUserMenu}
+                  className="flex items-center justify-center w-10 h-10 bg-gray-700 rounded-full text-gray-300 hover:bg-gray-600"
+                >
+                  {/* Sử dụng avatarUrl nếu có, nếu không dùng icon mặc định */}
+                  {authUser.avatarUrl ? (
+                    <img
+                      src={authUser.avatarUrl}
+                      alt="Avatar"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
+                  )}
+                </button>
+
+                {/* Menu thả xuống */}
+                {isUserMenuOpen && (
+                  <div className="absolute top-full right-0 mt-3 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl overflow-hidden z-50">
+                    <div className="p-4 border-b border-gray-700">
+                      <p className="font-bold text-base text-white truncate">
+                        {authUser.displayName}
+                      </p>
+                      <p className="text-sm text-gray-400 truncate">
+                        @{authUser.username}
+                      </p>
+                    </div>
+                    <nav className="py-2">
+                      <Link
+                        to="/tai-khoan"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white"
+                      >
+                        <FontAwesomeIcon icon={faUserCircle} className="w-4" />
+                        <span>Tài khoản</span>
+                      </Link>
+                      <Link
+                        to="/yeu-thich"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white"
+                      >
+                        <FontAwesomeIcon icon={faHeart} className="w-4" />
+                        <span>Yêu thích</span>
+                      </Link>
+                      <Link
+                        to="/danh-sach"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white"
+                      >
+                        <FontAwesomeIcon icon={faList} className="w-4" />
+                        <span>Danh sách</span>
+                      </Link>
+                      <Link
+                        to="/xem-tiep"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white"
+                      >
+                        <FontAwesomeIcon icon={faHistory} className="w-4" />
+                        <span>Xem tiếp</span>
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-gray-700 hover:text-red-300 border-t border-gray-700 mt-2"
+                      >
+                        <FontAwesomeIcon icon={faSignOutAlt} className="w-4" />
+                        <span>Thoát</span>
+                      </button>
+                    </nav>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // === NẾU CHƯA ĐĂNG NHẬP ===
+              <a
+                href="#"
+                onClick={openLoginModal}
+                className="flex items-center space-x-2 py-2 px-4 bg-white text-gray-900 font-bold rounded-full shadow-lg transition duration-200 hover:bg-gray-200"
+              >
+                <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
+                <span>Đăng nhập</span>
+              </a>
+            )}
           </div>
         </div>
 
@@ -384,15 +495,52 @@ function Header() {
 
         {/* Nội dung menu */}
         <nav className="p-4 flex flex-col h-full overflow-y-auto">
-          <a
-            href="#"
-            onClick={openLoginModal}
-            className="flex  items-center justify-center space-x-2 py-2 px-4 mb-6 bg-white text-gray-900 font-bold rounded-full shadow-lg transition duration-200 hover:bg-gray-200"
-          >
-            <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
-            <span>Đăng nhập</span>
-          </a>
+          {authUser ? (
+            // === NẾU ĐÃ ĐĂNG NHẬP (MOBILE) ===
+            <div className="mb-6">
+              <div className="flex items-center gap-3 p-2 rounded-lg bg-gray-800">
+                <div className="flex items-center justify-center w-12 h-12 bg-gray-700 rounded-full text-gray-300">
+                  {authUser.avatarUrl ? (
+                    <img
+                      src={authUser.avatarUrl}
+                      alt="Avatar"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <FontAwesomeIcon icon={faUser} className="w-6 h-6" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-bold text-base text-white truncate">
+                    {authUser.displayName}
+                  </p>
+                  <p className="text-sm text-gray-400 truncate">
+                    @{authUser.username}
+                  </p>
+                </div>
+              </div>
+              <Link
+                to="/tai-khoan"
+                onClick={handleMobileLinkClick}
+                className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
+              >
+                <FontAwesomeIcon icon={faUserCircle} className="w-5" />
+                <span>Tài khoản</span>
+              </Link>
+            </div>
+          ) : (
+            // === NẾU CHƯA ĐĂNG NHẬP (MOBILE) ===
+            <a
+              href="#"
+              onClick={openLoginModal}
+              className="flex items-center justify-center space-x-2 py-2 px-4 mb-6 bg-white text-gray-900 font-bold rounded-full shadow-lg transition duration-200 hover:bg-gray-200"
+            >
+              <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
+              <span>Đăng nhập</span>
+            </a>
+          )}
 
+          {/* Liên kết chung */}
           <Link
             to="/phim-le"
             onClick={handleMobileLinkClick}
@@ -415,6 +563,37 @@ function Header() {
             Phim chiếu rạp
           </Link>
 
+          {/* THÊM MỚI: Các link cho user đã đăng nhập (Mobile) */}
+          {authUser && (
+            <>
+              <Link
+                to="/yeu-thich"
+                onClick={handleMobileLinkClick}
+                className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
+              >
+                <FontAwesomeIcon icon={faHeart} className="w-5" />
+                <span>Yêu thích</span>
+              </Link>
+              <Link
+                to="/danh-sach"
+                onClick={handleMobileLinkClick}
+                className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
+              >
+                <FontAwesomeIcon icon={faList} className="w-5" />
+                <span>Danh sách</span>
+              </Link>
+              <Link
+                to="/xem-tiep"
+                onClick={handleMobileLinkClick}
+                className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
+              >
+                <FontAwesomeIcon icon={faHistory} className="w-5" />
+                <span>Xem tiếp</span>
+              </Link>
+            </>
+          )}
+
+          {/* ... (Menu thể loại và năm - Giữ nguyên) ... */}
           <div className="mt-4 pt-4 border-t border-gray-700">
             <h3 className="text-gray-400 font-bold mb-2">Thể Loại</h3>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -446,6 +625,19 @@ function Header() {
               ))}
             </div>
           </div>
+
+          {/* THÊM MỚI: Nút đăng xuất (Mobile) */}
+          {authUser && (
+            <div className="mt-6 pt-4 border-t border-gray-700">
+              <button
+                onClick={handleLogout}
+                className="w-full text-left flex items-center gap-3 px-2 py-3 text-lg text-red-400 hover:text-red-300"
+              >
+                <FontAwesomeIcon icon={faSignOutAlt} className="w-5" />
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          )}
         </nav>
       </div>
 
