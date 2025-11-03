@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://ro-anime.vercel.app"], // Thêm domain Vercel của bạn
+    origin: ["http://localhost:5173", "https://ro-anime.vercel.app"],
     credentials: true,
   })
 );

@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+
+// ĐỊNH NGHĨA BASE URL CHO API BACKEND
+// Ưu tiên: VITE_API_BASE_URL (được set trên Vercel)
+// Dự phòng: window.location.origin + "/api" (Domain hiện tại, hoạt động trên Vercel)
+// LƯU Ý: Frontend của bạn cần gọi API tại /api/auth/...
 axios.defaults.baseURL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api";
+  import.meta.env.VITE_API_BASE_URL || `${window.location.origin}/api`;
 
 // Tạo Context
 export const AuthContext = createContext();
