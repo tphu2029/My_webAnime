@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import MovieCard from "../ui/MovieCard";
 
-// --- CẤU HÌNH API ---
 const apiKey = import.meta.env.VITE_API_KEY;
 const options = {
   method: "GET",
@@ -12,7 +11,6 @@ const options = {
   },
 };
 
-// --- ÁNH XẠ SLUG SANG TÊN VÀ ID CỦA TMDB ---
 const GENRE_MAP = {
   // Anime Demographics & Tropes
   shounen: { name: "Shounen", id: 10759 }, // Action & Adventure

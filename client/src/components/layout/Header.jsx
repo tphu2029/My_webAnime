@@ -8,16 +8,16 @@ import {
   faCaretDown,
   faBars,
   faTimes,
-  faSignOutAlt, // THÊM MỚI: Icon đăng xuất
-  faHeart, // THÊM MỚI: Icon yêu thích
-  faList, // THÊM MỚI: Icon danh sách
-  faHistory, // THÊM MỚI: Icon xem tiếp
-  faUserCircle, // THÊM MỚI: Icon tài khoản
-  faBell, // THÊM MỚI: Icon chuông
+  faSignOutAlt,
+  faHeart,
+  faList,
+  faHistory,
+  faUserCircle,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../assets/img/logo.png";
 import LoginModal from "../ui/LoginModal";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function Header() {
   const [isGenreOpen, setIsGenreOpen] = useState(false);
@@ -36,10 +36,13 @@ function Header() {
   const { authUser, logout } = useAuth();
 
   const ANIME_GENRES = [
+    // Demographics & Tropes
     { name: "Shounen", slug: "shounen" },
     { name: "Shoujo", slug: "shoujo" },
     { name: "Seinen", slug: "seinen" },
     { name: "Isekai", slug: "isekai" },
+
+    // Standard Genres
     { name: "Hành động & Phiêu lưu", slug: "action" },
     { name: "Hài hước", slug: "comedy" },
     { name: "Lãng mạn", slug: "romance" },
@@ -53,7 +56,8 @@ function Header() {
   const genreRef = useRef(null);
   const yearRef = useRef(null);
   const searchRef = useRef(null);
-  const userMenuRef = useRef(null);
+  const userMenuRef = useRef(null); // Ref cho menu người dùng
+
   const openLoginModal = (e) => {
     e.preventDefault();
     setIsModalOpen(true);
@@ -89,18 +93,20 @@ function Header() {
     setIsYearOpen(false);
   };
 
+  // Ngăn cuộn trang khi menu di động mở
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
+    // Cleanup function
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [isMobileMenuOpen]);
 
-  //đóng menu khi click ra ngoài
+  // useEffect để đóng menu khi click ra ngoài
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -124,7 +130,7 @@ function Header() {
       ) {
         setIsSearchOpen(false);
       }
-      // đóng menu người dùng
+      // Logic đóng menu người dùng
       if (
         isUserMenuOpen &&
         userMenuRef.current &&
@@ -209,7 +215,7 @@ function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 p-4 bg-gray-950 shadow-md flex items-center justify-between text-white h-15">
-        {/*  LOGO  */}
+        {/* PHẦN 1: LOGO */}
         <div className="flex items-center">
           <Link
             to="/"
@@ -219,7 +225,7 @@ function Header() {
           </Link>
         </div>
 
-        {/*  SEARCH */}
+        {/* PHẦN 2: SEARCH */}
         <div
           ref={searchRef}
           className="relative flex-1  lg:flex-none  lg:w-[240px] xl:w-[500px] mx-4"
@@ -238,7 +244,6 @@ function Header() {
           />
           {isSearchOpen && (searchResults.length > 0 || isSearching) && (
             <div className="absolute top-full mt-2 left-0 right-0 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 max-h-96 overflow-auto">
-              {/* kết quả tìm kiếm  */}
               {isSearching && (
                 <div className="px-4 py-3 text-sm text-gray-300">
                   Đang tìm...
@@ -297,10 +302,10 @@ function Header() {
           )}
         </div>
 
-        {/* MENU DESKTOP & NÚT ĐĂNG NHẬP / AVATAR */}
+        {/* MENU DESKTOP & NÚT ĐĂNG NHẬP */}
         <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
-          {/* MENU DESKTOP  */}
-          <nav className="relative flex items-center space-x-6">
+          {/* SỬA LỖI: Giảm space-x-6 thành lg:space-x-3 và xl:space-x-6 */}
+          <nav className="relative flex items-center whitespace-nowrap space-x-3 xl:space-x-6">
             <div className="relative">
               <a
                 href="#"
@@ -359,7 +364,7 @@ function Header() {
               {isYearOpen && (
                 <div
                   ref={yearRef}
-                  className="absolute z-50 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-2 gap-x-6 gap-y-2 w-max min-w-[200px]"
+                  className="absolute z-50 -left-72 top-full mt-4 p-3 rounded-lg shadow-2xl bg-gray-800 border border-gray-700 grid grid-cols-5 gap-x-6 gap-y-2 w-max min-w-[300px]"
                 >
                   {years.map((year) => (
                     <Link
@@ -375,17 +380,23 @@ function Header() {
               )}
             </div>
           </nav>
-
-          {/* USER DESKTOP  */}
+          {/* USER DESKTOP */}
           <div className="relative flex items-center text-sm font-semibold">
             {authUser ? (
               // === NẾU ĐÃ ĐĂNG NHẬP ===
-              <div ref={userMenuRef}>
+
+              <div ref={userMenuRef} className="flex">
+                <Link
+                  to="/thong-bao"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-yellow-200"
+                >
+                  <FontAwesomeIcon icon={faBell} className="w-6! h-6!" />
+                </Link>
                 <button
                   onClick={toggleUserMenu}
-                  className="flex items-center justify-center w-10 h-10 bg-gray-700 rounded-full text-gray-300 hover:bg-gray-600"
+                  className="flex items-center mr-4 ml-4 justify-center w-10 h-10 bg-gray-700 rounded-full text-gray-300 hover:bg-gray-600"
                 >
-                  {/* Sử dụng avatarUrl nếu có, nếu không dùng icon mặc định */}
                   {authUser.avatarUrl ? (
                     <img
                       src={authUser.avatarUrl}
@@ -393,7 +404,7 @@ function Header() {
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
-                    <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
+                    <FontAwesomeIcon icon={faUser} className="w-4 h-4 " />
                   )}
                 </button>
 
@@ -563,7 +574,7 @@ function Header() {
             Phim chiếu rạp
           </Link>
 
-          {/* THÊM MỚI: Các link cho user đã đăng nhập (Mobile) */}
+          {/* Các link cho user đã đăng nhập (Mobile) */}
           {authUser && (
             <>
               <Link
@@ -593,7 +604,7 @@ function Header() {
             </>
           )}
 
-          {/* ... (Menu thể loại và năm - Giữ nguyên) ... */}
+          {/* Menu thể loại và năm */}
           <div className="mt-4 pt-4 border-t border-gray-700">
             <h3 className="text-gray-400 font-bold mb-2">Thể Loại</h3>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -626,7 +637,7 @@ function Header() {
             </div>
           </div>
 
-          {/* THÊM MỚI: Nút đăng xuất (Mobile) */}
+          {/* Nút đăng xuất (Mobile) */}
           {authUser && (
             <div className="mt-6 pt-4 border-t border-gray-700">
               <button
