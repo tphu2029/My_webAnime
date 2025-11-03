@@ -1,18 +1,18 @@
 {
   "builds": [
     {
-      "src": "server/index.js", // Hoặc file entry point của server của bạn
+      "src": "server/server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)", // Định tuyến mọi request đến /api/xxx qua server/index.js
-      "dest": "server/index.js"
+      "src": "/api/(.*)",
+      "dest": "server/server.js"
     },
     {
-      "src": "/(.*)", // Định tuyến mọi request còn lại đến frontend đã build (client/dist)
-      "dest": "client/dist/$1"
+      "src": "/(.*)",
+      "dest": "/client/dist/$1"
     }
   ]
 }
