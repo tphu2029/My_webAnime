@@ -1,6 +1,15 @@
 import e from "express";
 import mongoose from "mongoose";
 
+const favoriteItemSchema = new mongoose.Schema(
+  {
+    mediaId: { type: String, required: true },
+    mediaType: { type: String, required: true, enum: ["movie", "tv"] },
+    posterPath: { type: String, required: true },
+    title: { type: String, required: true },
+  },
+  { _id: false }
+);
 const userSchema = new mongoose.Schema(
   {
     username: {
