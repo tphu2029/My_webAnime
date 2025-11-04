@@ -25,6 +25,11 @@ app.use(
     credentials: true,
   })
 );
+
+app.get("/", (req, res) => {
+  res.send("RoAnime Server is running 🚀");
+});
+
 // public route
 app.use("/api/auth", authRoute);
 
