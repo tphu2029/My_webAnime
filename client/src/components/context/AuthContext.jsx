@@ -2,8 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-axios.defaults.baseURL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api";
+axios.defaults.baseURL = "/api";
 
 // Tạo Context
 export const AuthContext = createContext();
