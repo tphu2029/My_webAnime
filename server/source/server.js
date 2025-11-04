@@ -16,7 +16,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://ro-anime.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://ro-anime.vercel.app",
+      "https://ro-anime-server.vercel.app",
+    ],
     credentials: true,
   })
 );
