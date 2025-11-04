@@ -20,6 +20,7 @@ app.use(
       "http://localhost:5173",
       "https://ro-anime.vercel.app",
       "https://ro-anime-server.vercel.app",
+      "https://ro-anime-client.vercel.app",
     ],
     credentials: true,
   })
