@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }) => {
     setAccessToken(null);
   };
 
-  // 🌟 THÊM: Hàm yêu cầu đăng nhập
+  // Hàm yêu cầu đăng nhập
   const requireLogin = () => {
     toast.error("Vui lòng đăng nhập để sử dụng tính năng này!");
     setLoginModalRequired(true);
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
     setLoginModalRequired(false);
   };
 
-  // 🌟 THÊM: Hàm xử lý Yêu thích
+  // Hàm xử lý Yêu thích
   const toggleFavorite = async (mediaItem) => {
     // mediaItem là object { mediaId, mediaType, posterPath, title }
     if (!authUser) {

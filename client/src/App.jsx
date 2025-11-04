@@ -8,11 +8,12 @@ import MovieDetailPage from "./components/pages/MovieDetailPage";
 import WatchPage from "./components/pages/WatchPage";
 import PersonPage from "./components/pages/PersonPage";
 import { Toaster } from "sonner";
+import "./assets/css/index.css";
 
 function App() {
   return (
     <BrowserRouter>
-      <Toaster position="top-right" richColors />
+      <Toaster position="bottom-right" richColors />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
