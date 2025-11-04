@@ -140,7 +140,7 @@ const HeroBanner = ({ fetchUrl, onPlay, onFavorite, onInfo }) => {
         }}
       />
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-950/95 via-gray-950/70 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-r from-gray-950/95 via-gray-950/70 to-transparent" />
 
       {/* Content */}
       <div className="relative z-10 grid grid-cols-1 items-center gap-6 px-4 py-8 md:px-10 md:py-12 lg:grid-cols-2 lg:px-14 lg:py-16">
@@ -173,7 +173,7 @@ const HeroBanner = ({ fetchUrl, onPlay, onFavorite, onInfo }) => {
           </div>
 
           {/* Overview - Luôn giữ chỗ cao tương đương 3 dòng để đồng bộ kích thước */}
-          <p className="text-gray-200/90 text-sm md:text-base leading-relaxed mb-6 line-clamp-3 min-h-[4rem] md:min-h-[4.5rem]">
+          <p className="text-gray-200/90 text-sm md:text-base leading-relaxed mb-6 line-clamp-3 min-h-16 md:min-h-18">
             {item.overview ? (
               item.overview
             ) : (

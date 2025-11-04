@@ -265,7 +265,7 @@ function Header() {
         {/* PHẦN 2: SEARCH */}
         <div
           ref={searchRef}
-          className="relative flex-1  lg:flex-none  lg:w-[240px] xl:w-[500px] mx-4"
+          className="relative flex-1  lg:flex-none  lg:w-60 xl:w-[500px] mx-4"
         >
           <FontAwesomeIcon
             icon={faSearch}

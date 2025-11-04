@@ -115,14 +115,14 @@ const MovieDetailPage = () => {
           alt={`Banner của ${title}`}
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
       </div>
 
       {/* Nội dung chính */}
       <div className="container mx-auto max-w-6xl p-4 md:p-8 -mt-24 md:-mt-48 relative">
         <div className="md:flex md:space-x-8">
           {/* Poster */}
-          <div className="w-1/2 md:w-1/3 flex-shrink-0">
+          <div className="w-1/2 md:w-1/3 shrink-0">
             <img
               src={`${VITE_IMG_URL}${movie.poster_path}`}
               alt={`Poster của ${title}`}
