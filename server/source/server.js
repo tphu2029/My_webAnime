@@ -16,19 +16,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://ro-anime.vercel.app",
-      "https://ro-anime-server.vercel.app",
-      "https://ro-anime-client.vercel.app",
-    ],
+    origin: ["http://localhost:5173", "https://ro-anime.vercel.app"],
     credentials: true,
   })
 );
-
-app.get("/", (req, res) => {
-  res.send("RoAnime Server is running 🚀");
-});
 
 // public route
 app.use("/api/auth", authRoute);
