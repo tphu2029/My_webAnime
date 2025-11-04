@@ -25,11 +25,11 @@ app.use(
   })
 );
 // public route
-app.use("/auth", authRoute);
+app.use("/api/auth", authRoute);
 
 // private route
 app.use(protectedRoute);
-app.use("/user", userRoute);
+app.use("/api/user", userRoute);
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
