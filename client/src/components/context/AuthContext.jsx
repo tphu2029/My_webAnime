@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+
 axios.defaults.baseURL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api";
 
@@ -17,6 +19,7 @@ export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("accessToken") || null
   );
+  const [loginModalRequired, setLoginModalRequired] = useState(false);
 
   useEffect(() => {
     if (accessToken) {
@@ -65,6 +68,10 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     const response = await axios.post("/auth/signin", { username, password });
     setAccessToken(response.data.accessToken);
+    axios
+      .get("/user/me")
+      .then((res) => setAuthUser(res.data.user))
+      .catch(() => setAuthUser(null));
   };
 
   const signup = async (userData) => {
@@ -83,11 +90,55 @@ export const AuthProvider = ({ children }) => {
     setAccessToken(null);
   };
 
+  // 🌟 THÊM: Hàm yêu cầu đăng nhập
+  const requireLogin = () => {
+    toast.error("Vui lòng đăng nhập để sử dụng tính năng này!");
+    setLoginModalRequired(true);
+  };
+  const clearLoginRequirement = () => {
+    setLoginModalRequired(false);
+  };
+
+  // 🌟 THÊM: Hàm xử lý Yêu thích
+  const toggleFavorite = async (mediaItem) => {
+    // mediaItem là object { mediaId, mediaType, posterPath, title }
+    if (!authUser) {
+      requireLogin();
+      return;
+    }
+
+    try {
+      // Gửi yêu cầu lên server
+      const response = await axios.put("/user/favorites", mediaItem);
+
+      // Cập nhật lại state của authUser với dữ liệu mới từ server
+      setAuthUser(response.data.user);
+
+      // Kiểm tra xem đã thêm hay xóa
+      const isFavorited = response.data.user.favorites.some(
+        (item) => item.mediaId === mediaItem.mediaId
+      );
+
+      if (isFavorited) {
+        toast.success("Đã thêm vào Yêu thích!");
+      } else {
+        toast.info("Đã xóa khỏi Yêu thích.");
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật Yêu thích:", error);
+      toast.error("Đã có lỗi xảy ra.");
+    }
+  };
+
   const value = {
     authUser,
     login,
     signup,
     logout,
+    toggleFavorite,
+    requireLogin,
+    loginModalRequired,
+    clearLoginRequirement,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

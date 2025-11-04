@@ -6,6 +6,7 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 const IMG_W185 = "https://image.tmdb.org/t/p/w185";
@@ -52,7 +53,7 @@ const HeroBanner = ({ fetchUrl, onPlay, onFavorite, onInfo }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const { authUser, toggleFavorite, requireLogin } = useAuth();
   useEffect(() => {
     const controller = new AbortController();
     const fetchData = async () => {
@@ -99,6 +100,29 @@ const HeroBanner = ({ fetchUrl, onPlay, onFavorite, onInfo }) => {
   if (error || !item) {
     return null;
   }
+
+  // Ham click
+  const handleFavoriteClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!authUser) {
+      requireLogin();
+      return;
+    }
+
+    toggleFavorite({
+      mediaId: String(item.id),
+      mediaType: item.media_type || "tv", // Lấy media_type từ item, nếu không có thì mặc định là "tv"
+      posterPath: item.poster_path,
+      title: item.name || item.title,
+    });
+  };
+
+  //  Kiểm tra isFavorite
+  const isFavorite = authUser?.favorites?.some(
+    (fav) => fav.mediaId === String(item?.id)
+  );
 
   const bg = item.backdrop_path ? `${IMG_ORIGINAL}${item.backdrop_path}` : null;
   const rating = tmdbRating(item);
@@ -175,10 +199,14 @@ const HeroBanner = ({ fetchUrl, onPlay, onFavorite, onInfo }) => {
             <button
               type="button"
               onClick={() => onFavorite && onFavorite(item)}
-              className="w-11 h-11 rounded-full border-2 border-gray-500/70 text-gray-300 hover:bg-gray-700 hover:text-white transition"
+              className={`w-11 h-11 rounded-full border-2 border-gray-500/70 hover:bg-gray-700 transition ${
+                isFavorite
+                  ? "text-red-500 hover:text-red-400"
+                  : "text-gray-400 hover:text-white"
+              } `}
               aria-label="Yêu thích"
             >
-              <FontAwesomeIcon icon={faHeart} />
+              <FontAwesomeIcon icon={faHeart} onClick={handleFavoriteClick} />
             </button>
 
             <Link to={`/tv/${item.id}`}>

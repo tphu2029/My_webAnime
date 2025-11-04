@@ -6,10 +6,13 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 const MovieCard = ({ movie }) => {
+  const { authUser, toggleFavorite, requireLogin } = useAuth();
+
   if (!movie || !movie.poster_path) {
     return null;
   }
@@ -27,12 +30,36 @@ const MovieCard = ({ movie }) => {
   };
 
   const mediaType = movie.title ? "movie" : "tv";
+  //Kiểm tra xem phim này có trong ds yêu thích không
+  //So sánh chuỗi (mediaId trong server là string)
+  const isFavorite = authUser?.favorites?.some(
+    (fav) => fav.mediaId === String(movie.id)
+  );
+
+  // Hàm xử lý click
+  const handleFavoriteClick = (e) => {
+    e.preventDefault(); // Ngăn hành vi mặc định (như link)
+    e.stopPropagation(); // Ngăn sự kiện nổi bọt (quan trọng cho card hover)
+
+    if (!authUser) {
+      requireLogin(); // Yêu cầu đăng nhập
+      return;
+    }
+
+    // Gửi thông tin phim lên context
+    toggleFavorite({
+      mediaId: String(movie.id),
+      mediaType: mediaType,
+      posterPath: movie.poster_path,
+      title: movieDetails.title,
+    });
+  };
 
   return (
     <div className="group relative w-full cursor-pointer overflow-hidden rounded-lg bg-gray-900 shadow-md transition-transform duration-300 hover:scale-105">
       {/* Container chính của card, dùng aspect-ratio [2/3] */}
-      <div className="aspect-[2/3]">
-        {/* === 1. VÙNG LINK CHO MOBILE === */}
+      <div className="aspect-2/3">
+        {/* ===  VÙNG LINK CHO MOBILE === */}
         {/* Link này bao trọn thẻ, hiển thị poster, và BIẾN MẤT trên desktop (lg:hidden) */}
         <Link
           to={`/${mediaType}/${movie.id}`}
@@ -46,7 +73,7 @@ const MovieCard = ({ movie }) => {
           <div className="absolute inset-0 bg-black/10"></div>
         </Link>
 
-        {/* === 2. VÙNG POSTER CHO DESKTOP (KHÔNG CÓ LINK) === */}
+        {/* ===  VÙNG POSTER CHO DESKTOP (KHÔNG CÓ LINK) === */}
         {/* Vùng này chỉ để hiển thị, sẽ bị che bởi hover zone khi hover */}
         <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0 hidden lg:block">
           {" "}
@@ -59,7 +86,7 @@ const MovieCard = ({ movie }) => {
           <div className="absolute inset-0 bg-black/10"></div>
         </div>
 
-        {/* === 3. PHẦN CHI TIẾT KHI HOVER (CHỈ HIỆN TRÊN DESKTOP) === */}
+        {/* === PHẦN CHI TIẾT KHI HOVER (CHỈ HIỆN TRÊN DESKTOP) === */}
         <div
           className="
             absolute inset-0 flex-col overflow-hidden bg-gray-900 
@@ -99,7 +126,15 @@ const MovieCard = ({ movie }) => {
                 </button>
               </Link>
               {/* Nút Heart */}
-              <button className="rounded-lg border-2 border-gray-600 p-1.5 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white">
+              <button
+                onClick={handleFavoriteClick}
+                className={`rounded-lg border-2 border-gray-600 p-1.5 text-gray-400 transition-colors hover:bg-gray-700 ${
+                  isFavorite
+                    ? "text-red-500 hover:text-red-400"
+                    : "text-gray-400 hover:text-white"
+                }
+                `}
+              >
                 <FontAwesomeIcon icon={faHeart} />
               </button>
               {/* Nút Info */}

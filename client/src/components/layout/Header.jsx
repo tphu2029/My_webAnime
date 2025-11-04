@@ -33,7 +33,10 @@ function Header() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   // State và Context cho menu người dùng
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { authUser, logout } = useAuth();
+
+  //lấy authUse, logout, các hàm modal từ context
+  const { authUser, logout, loginModalRequired, clearLoginRequirement } =
+    useAuth();
 
   const ANIME_GENRES = [
     // Demographics & Tropes
@@ -105,6 +108,14 @@ function Header() {
     setIsYearOpen(false);
     setIsUserMenuOpen(false);
   };
+
+  //useEffect để lắng nghe yêu cầu mở modal
+  useEffect(() => {
+    if (loginModalRequired) {
+      setIsModalOpen(true);
+      clearLoginRequirement(); // Reset lại tín hiệu
+    }
+  }, [loginModalRequired, clearLoginRequirement]);
 
   // Ngăn cuộn trang khi menu di động mở
   useEffect(() => {
@@ -422,7 +433,7 @@ function Header() {
 
                   {/* Menu thả xuống của thông báo */}
                   {isNotificationOpen && (
-                    <div className="absolute top-full right-0 mt-3 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl z-50">
+                    <div className="absolute top-full right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl z-50">
                       {/* Nội dung thông báo */}
                       <div className="p-4 text-center text-gray-400 text-sm">
                         Chưa có thông báo nào

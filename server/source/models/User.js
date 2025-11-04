@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema(
     avatarId: { type: String, default: "" }, // ID for avatar management (e.g., cloud storage ID)
     bio: { type: String, maxLength: 500, default: "" }, // User biography
     phone: { type: String, spare: true, default: "" },
+    favorites: { type: [favoriteItemSchema], default: [] },
   },
   {
     timestamps: true,

@@ -8,6 +8,7 @@ import {
   faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 // --- TMDB CONFIGURATION ---
 const API_URL = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&without_genres=10751,35&page=1`;
@@ -26,6 +27,25 @@ const BannerList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const { authUser, toggleFavorite, requireLogin } = useAuth();
+
+  const handleFavoriteClick = (e, movie) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!authUser) {
+      requireLogin();
+      return;
+    }
+
+    toggleFavorite({
+      mediaId: String(movie.id),
+      mediaType: "tv",
+      posterPath: movie.poster_path,
+      title: movie.name || movie.title,
+    });
+  };
 
   useEffect(() => {
     const fetchAnimeData = async () => {
@@ -71,79 +91,81 @@ const BannerList = () => {
         showThumbs={false}
         showStatus={false}
         showIndicators={false}
-        autoPlay={true}
-        infiniteLoop={true}
+        autoPlay
+        infiniteLoop
         interval={5000}
-        stopOnHover={true}
+        stopOnHover
         selectedItem={selectedIndex}
         onChange={setSelectedIndex}
         className="custom-carousel"
       >
-        {topAnime.map((movie) => (
-          <div
-            key={movie.id}
-            // banner
-            className="relative h-[50vh] overflow-hidden text-white md:h-[700px] "
-          >
-            <img
-              src={`${IMAGE_BASE_URL}w1280${movie.backdrop_path}`}
-              alt={movie.name || movie.title}
-              className="absolute inset-0 z-0 h-full w-full object-cover"
-            />
-            {/* Lớp phủ */}
-            <div className="absolute inset-0 z-10 bg-black opacity-20"></div>
-            <div className="absolute inset-0 z-20 bg-gradient-to-r from-gray-950/70 via-transparent to-transparent"></div>
+        {topAnime.map((movie) => {
+          // Kiểm tra xem phim có trong danh sách yêu thích không
+          const isFavorite = authUser?.favorites?.some(
+            (fav) => fav.mediaId === String(movie.id)
+          );
 
-            {/* Container nội dung */}
-            <div className="relative z-30 flex h-full flex-col items-start justify-center p-6 md:p-10 lg:p-20">
-              <div className="max-w-xl text-left">
-                <p className="mb-2 text-sm font-bold text-red-500 line-clamp-1 md:line-clamp-none">
-                  {movie.original_name || movie.original_title || movie.name}
-                </p>
-                <h1
-                  // Kích thước tiêu đề: text-3xl cho mobile, to dần ra trên màn hình lớn
-                  className="mb-4 line-clamp-2 text-3xl font-extrabold text-shadow-2xs shadow-stone-950 md:text-4xl lg:text-5xl"
-                >
-                  {movie.name || movie.title}
-                </h1>
+          return (
+            <div
+              key={movie.id}
+              className="relative h-[50vh] overflow-hidden text-white md:h-[700px]"
+            >
+              <img
+                src={`${IMAGE_BASE_URL}w1280${movie.backdrop_path}`}
+                alt={movie.name || movie.title}
+                className="absolute inset-0 z-0 h-full w-full object-cover"
+              />
+              {/* Lớp phủ */}
+              <div className="absolute inset-0 z-10 bg-black opacity-20" />
+              <div className="absolute inset-0 z-20 bg-linear-to-r from-gray-950/70 via-transparent to-transparent" />
 
-                {/* Thông tin phụ */}
-                <div className="mb-4 flex items-center space-x-4 text-sm font-semibold">
-                  {/* ... nội dung giữ nguyên ... */}
-                </div>
-                <p className="mb-8 text-base text-gray-300 line-clamp-3">
-                  {movie.overview || "Không có mô tả chi tiết."}
-                </p>
+              {/* Container nội dung */}
+              <div className="relative z-30 flex h-full flex-col items-start justify-center p-6 md:p-10 lg:p-20">
+                <div className="max-w-xl text-left">
+                  <p className="mb-2 text-sm font-bold text-red-500 line-clamp-1 md:line-clamp-none">
+                    {movie.original_name || movie.original_title || movie.name}
+                  </p>
+                  <h1 className="mb-4 line-clamp-2 text-3xl font-extrabold text-shadow-2xs shadow-stone-950 md:text-4xl lg:text-5xl">
+                    {movie.name || movie.title}
+                  </h1>
 
-                {/* Các nút bấm */}
-                {/*  Khoảng cách nút: space-x-6 cho mobile, space-x-8 từ tablet */}
-                <div className="flex items-center space-x-6 md:space-x-8">
-                  <Link to={`/tv/${movie.id}/trailer`}>
-                    <FontAwesomeIcon
-                      icon={faCirclePlay}
-                      // Kích thước icon: text-6xl cho mobile, text-7xl từ tablet
-                      className="cursor-pointer text-6xl transition-colors duration-200 hover:text-red-500 md:text-7xl"
-                    />
-                  </Link>
-                  <div className="flex items-center space-x-4">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      // Kích thước icon: text-3xl cho mobile, text-4xl từ tablet
-                      className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
-                    />
-                    <Link to={`/tv/${movie.id}`}>
-                      {" "}
+                  {/* Mô tả */}
+                  <p className="mb-8 text-base text-gray-300 line-clamp-3">
+                    {movie.overview || "Không có mô tả chi tiết."}
+                  </p>
+
+                  {/* Các nút bấm */}
+                  <div className="flex items-center space-x-6 md:space-x-8">
+                    <Link to={`/tv/${movie.id}/trailer`}>
                       <FontAwesomeIcon
-                        icon={faCircleInfo}
-                        className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
+                        icon={faCirclePlay}
+                        className="cursor-pointer text-6xl transition-colors duration-200 hover:text-red-500 md:text-7xl"
                       />
                     </Link>
+
+                    <div className="flex items-center space-x-4">
+                      <FontAwesomeIcon
+                        icon={faHeart}
+                        onClick={(e) => handleFavoriteClick(e, movie)}
+                        className={`cursor-pointer text-3xl transition-colors duration-200 md:text-4xl ${
+                          isFavorite
+                            ? "text-red-500"
+                            : "text-white hover:text-red-500"
+                        }`}
+                      />
+                      <Link to={`/tv/${movie.id}`}>
+                        <FontAwesomeIcon
+                          icon={faCircleInfo}
+                          className="cursor-pointer text-3xl text-white transition-colors duration-200 hover:text-red-500 md:text-4xl"
+                        />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </Carousel>
 
       {/* THANH THUMBNAIL TÙY CHỈNH */}

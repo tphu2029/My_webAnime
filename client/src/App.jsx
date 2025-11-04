@@ -6,11 +6,13 @@ import CategoryPage from "./components/pages/CategoryPage";
 import ScrollToTop from "./components/ui/ScrollToTop";
 import MovieDetailPage from "./components/pages/MovieDetailPage";
 import WatchPage from "./components/pages/WatchPage";
-import PersonPage from "./components/pages/PersonPage"; // 👈 thêm
+import PersonPage from "./components/pages/PersonPage";
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" richColors />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
