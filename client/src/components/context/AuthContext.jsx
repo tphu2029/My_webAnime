@@ -4,15 +4,12 @@ import { toast } from "sonner";
 
 axios.defaults.baseURL = "/api";
 
-// Tạo Context
 export const AuthContext = createContext();
 
-// Tạo hàm "use" (để tiện sử dụng sau này)
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-// Tạo Provider (Cái bọc toàn bộ App)
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const [accessToken, setAccessToken] = useState(
@@ -125,7 +122,36 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật Yêu thích:", error);
-      toast.error("Đã có lỗi xảy ra.");
+      toast.error(error.response?.data?.message || "Đã có lỗi xảy ra.");
+    }
+  };
+
+  // CẬP NHẬT PROFILE
+  const updateUserProfile = async (formData) => {
+    // formData = { displayName, phone, bio }
+    try {
+      const response = await axios.put("/user/profile", formData);
+      // Cập nhật lại user trong context
+      setAuthUser(response.data.user);
+      toast.success(response.data.message || "Cập nhật thông tin thành công!");
+    } catch (error) {
+      console.error("Lỗi khi cập nhật profile:", error);
+      // Ném lỗi ra để component PersonPage có thể bắt
+      throw new Error(
+        error.response?.data?.message || "Lỗi khi cập nhật thông tin"
+      );
+    }
+  };
+
+  // CẬP NHẬT MẬT KHẨU
+  const updateUserPassword = async (passwordData) => {
+    // passwordData = { oldPassword, newPassword }
+    try {
+      const response = await axios.put("/user/password", passwordData);
+      toast.success(response.data.message || "Đổi mật khẩu thành công!");
+    } catch (error) {
+      console.error("Lỗi khi đổi mật khẩu:", error);
+      throw new Error(error.response?.data?.message || "Lỗi khi đổi mật khẩu");
     }
   };
 
@@ -138,6 +164,8 @@ export const AuthProvider = ({ children }) => {
     requireLogin,
     loginModalRequired,
     clearLoginRequirement,
+    updateUserProfile,
+    updateUserPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
