@@ -8,6 +8,31 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
+// Bạn nên thay thế bằng dữ liệu thật của mình
+const sampleMovies = [
+  {
+    id: 1,
+    title: "Jujutsu Kaisen",
+    subtitle: "Tập 24",
+    poster: "https://via.placeholder.com/300x450.png?text=Phim+1", // Ảnh mẫu
+    progress: "20/24 phút",
+  },
+  {
+    id: 2,
+    title: "Berserk",
+    subtitle: "Tập 12",
+    poster: "https://via.placeholder.com/300x450.png?text=Phim+2", // Ảnh mẫu
+    progress: "15/23 phút",
+  },
+  {
+    id: 3,
+    title: "Anime Mẫu 3",
+    subtitle: "Tập 1",
+    poster: "https://via.placeholder.com/300x450.png?text=Phim+3", // Ảnh mẫu
+    progress: "5/25 phút",
+  },
+];
+
 export default function PersonPage() {
   const location = useLocation();
   const [movies, setMovies] = useState([]);
@@ -23,6 +48,7 @@ export default function PersonPage() {
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
+      // Giờ đây 'sampleMovies' đã được định nghĩa và sẽ hoạt động
       if (location.pathname.includes("xem-tiep")) setMovies(sampleMovies);
       else if (location.pathname.includes("yeu-thich")) setMovies([]);
       else setMovies([]);
@@ -39,8 +65,8 @@ export default function PersonPage() {
 
   return (
     <div className="flex min-h-screen bg-[#121212] text-white">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#1c1c1c] p-6 flex flex-col justify-between shadow-lg">
+      {/* Sidebar (Ẩn trên mobile/tablet, chỉ hiện trên Desktop) */}
+      <aside className="hidden lg:flex w-64 bg-[#1c1c1c] p-6 flex-col justify-between shadow-lg">
         <div>
           <h2 className="text-lg font-semibold mb-6">Quản lý tài khoản</h2>
           <nav className="flex flex-col space-y-2">
@@ -64,8 +90,8 @@ export default function PersonPage() {
         </div>
       </aside>
 
-      {/* Nội dung chính */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      {/*  Nội dung chính (Thêm padding-bottom để không bị menu mobile che) */}
+      <main className="flex-1 p-4 sm:p-8 overflow-y-auto w-full pb-20 lg:pb-8">
         <h2 className="text-2xl font-bold mb-6">{pageTitle}</h2>
 
         {loading ? (
@@ -103,6 +129,29 @@ export default function PersonPage() {
           </div>
         )}
       </main>
+
+      {/* 🌟 FIX 4: Thêm Menu Footer cho Mobile/Tablet (Chỉ hiện khi < lg) */}
+      <footer className="fixed bottom-0 left-0 right-0 lg:hidden bg-[#1c1c1c] border-t border-gray-800 z-10">
+        <nav className="flex justify-around items-center h-16">
+          {/* Tái sử dụng mảng 'menu' để tạo thanh điều hướng mobile */}
+          {menu.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex flex-col items-center justify-center w-full h-full transition-colors duration-150 ${
+                  isActive
+                    ? "text-yellow-500"
+                    : "text-gray-300 hover:text-yellow-500"
+                }`
+              }
+            >
+              <FontAwesomeIcon icon={item.icon} className="text-xl" />
+              <span className="text-xs mt-1">{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+      </footer>
     </div>
   );
 }

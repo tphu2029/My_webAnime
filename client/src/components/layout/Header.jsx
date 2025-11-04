@@ -30,7 +30,7 @@ function Header() {
   const [genres, setGenres] = useState([]);
   const [years, setYears] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   // State và Context cho menu người dùng
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { authUser, logout } = useAuth();
@@ -56,7 +56,8 @@ function Header() {
   const genreRef = useRef(null);
   const yearRef = useRef(null);
   const searchRef = useRef(null);
-  const userMenuRef = useRef(null); // Ref cho menu người dùng
+  const userMenuRef = useRef(null);
+  const notificationRef = useRef(null);
 
   const openLoginModal = (e) => {
     e.preventDefault();
@@ -65,6 +66,7 @@ function Header() {
     setIsGenreOpen(false);
     setIsYearOpen(false);
     setIsUserMenuOpen(false);
+    setIsNotificationOpen(false);
   };
 
   const closeLoginModal = () => {
@@ -76,6 +78,7 @@ function Header() {
     setIsGenreOpen(!isGenreOpen);
     setIsYearOpen(false);
     setIsUserMenuOpen(false);
+    setIsNotificationOpen(false);
   };
 
   const toggleYearMenu = (e) => {
@@ -83,6 +86,7 @@ function Header() {
     setIsYearOpen(!isYearOpen);
     setIsGenreOpen(false);
     setIsUserMenuOpen(false);
+    setIsNotificationOpen(false);
   };
 
   // Hàm bật/tắt menu người dùng
@@ -91,6 +95,15 @@ function Header() {
     setIsUserMenuOpen(!isUserMenuOpen);
     setIsGenreOpen(false);
     setIsYearOpen(false);
+    setIsNotificationOpen(false);
+  };
+
+  const toggleNotificationMenu = (e) => {
+    e.preventDefault();
+    setIsNotificationOpen(!isNotificationOpen);
+    setIsGenreOpen(false);
+    setIsYearOpen(false);
+    setIsUserMenuOpen(false);
   };
 
   // Ngăn cuộn trang khi menu di động mở
@@ -138,12 +151,25 @@ function Header() {
       ) {
         setIsUserMenuOpen(false);
       }
+      if (
+        isNotificationOpen &&
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
+        setIsNotificationOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isGenreOpen, isYearOpen, isSearchOpen, isUserMenuOpen]);
+  }, [
+    isGenreOpen,
+    isYearOpen,
+    isSearchOpen,
+    isUserMenuOpen,
+    isNotificationOpen,
+  ]);
 
   // useEffect tìm kiếm
   useEffect(() => {
@@ -383,16 +409,27 @@ function Header() {
           {/* USER DESKTOP */}
           <div className="relative flex items-center text-sm font-semibold">
             {authUser ? (
-              // === NẾU ĐÃ ĐĂNG NHẬP ===
-
               <div ref={userMenuRef} className="flex">
-                <Link
-                  to="/thong-bao"
-                  onClick={() => setIsUserMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-yellow-200"
-                >
-                  <FontAwesomeIcon icon={faBell} className="w-6! h-6!" />
-                </Link>
+                {/* === NÚT VÀ DROPDOWN THÔNG BÁO === */}
+                <div ref={notificationRef} className="relative">
+                  <button
+                    onClick={toggleNotificationMenu}
+                    className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-yellow-200"
+                  >
+                    {/* Bạn có thể thêm một div 'relative' tại đây để hiển thị chấm đỏ thông báo */}
+                    <FontAwesomeIcon icon={faBell} className="w-6! h-6!" />
+                  </button>
+
+                  {/* Menu thả xuống của thông báo */}
+                  {isNotificationOpen && (
+                    <div className="absolute top-full right-0 mt-3 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl z-50">
+                      {/* Nội dung thông báo */}
+                      <div className="p-4 text-center text-gray-400 text-sm">
+                        Chưa có thông báo nào
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={toggleUserMenu}
                   className="flex items-center mr-4 ml-4 justify-center w-10 h-10 bg-gray-700 rounded-full text-gray-300 hover:bg-gray-600"
@@ -538,6 +575,32 @@ function Header() {
                 <FontAwesomeIcon icon={faUserCircle} className="w-5" />
                 <span>Tài khoản</span>
               </Link>
+              <>
+                <Link
+                  to="/yeu-thich"
+                  onClick={handleMobileLinkClick}
+                  className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
+                >
+                  <FontAwesomeIcon icon={faHeart} className="w-5" />
+                  <span>Yêu thích</span>
+                </Link>
+                <Link
+                  to="/danh-sach"
+                  onClick={handleMobileLinkClick}
+                  className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
+                >
+                  <FontAwesomeIcon icon={faList} className="w-5" />
+                  <span>Danh sách</span>
+                </Link>
+                <Link
+                  to="/xem-tiep"
+                  onClick={handleMobileLinkClick}
+                  className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
+                >
+                  <FontAwesomeIcon icon={faHistory} className="w-5" />
+                  <span>Xem tiếp</span>
+                </Link>
+              </>
             </div>
           ) : (
             // === NẾU CHƯA ĐĂNG NHẬP (MOBILE) ===
@@ -573,36 +636,6 @@ function Header() {
           >
             Phim chiếu rạp
           </Link>
-
-          {/* Các link cho user đã đăng nhập (Mobile) */}
-          {authUser && (
-            <>
-              <Link
-                to="/yeu-thich"
-                onClick={handleMobileLinkClick}
-                className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
-              >
-                <FontAwesomeIcon icon={faHeart} className="w-5" />
-                <span>Yêu thích</span>
-              </Link>
-              <Link
-                to="/danh-sach"
-                onClick={handleMobileLinkClick}
-                className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
-              >
-                <FontAwesomeIcon icon={faList} className="w-5" />
-                <span>Danh sách</span>
-              </Link>
-              <Link
-                to="/xem-tiep"
-                onClick={handleMobileLinkClick}
-                className="flex items-center gap-3 px-2 py-3 text-lg text-gray-200 hover:text-yellow-400"
-              >
-                <FontAwesomeIcon icon={faHistory} className="w-5" />
-                <span>Xem tiếp</span>
-              </Link>
-            </>
-          )}
 
           {/* Menu thể loại và năm */}
           <div className="mt-4 pt-4 border-t border-gray-700">
