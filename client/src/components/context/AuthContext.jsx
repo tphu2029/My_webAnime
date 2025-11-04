@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-axios.defaults.baseURL = "/api";
+axios.defaults.baseURL = import.meta.env.VITE_API_SERVER_URL;
 
 export const AuthContext = createContext();
 
