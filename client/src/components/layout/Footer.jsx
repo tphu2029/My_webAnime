@@ -157,10 +157,10 @@ const Footer = () => {
                     "
         >
           <p className="max-w-full text-sm leading-relaxed text-gray-300">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos facere
-            aliquam, cupiditate iure beatae in nemo, voluptates nam ducimus ut
-            veritatis suscipit? Qui eaque hic perspiciatis, possimus tempora
-            reprehenderit nesciunt!
+            RoAnime - Trang xem Anime online chất lượng cao miễn phí Vietsub,
+            thuyết minh, lồng tiếng full HD. Kho phim mới khổng lồ, phim chiếu
+            rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc,
+            Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ… đa dạng thể loại.
           </p>
 
           <button

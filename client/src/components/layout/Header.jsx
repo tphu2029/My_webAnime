@@ -540,7 +540,7 @@ function Header() {
       <div
         className={`fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-sm transform ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out lg:hidden`}
+        } transition-transform duration-300 ease-in-out lg:hidden flex flex-col`}
       >
         {/* Header của menu */}
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
@@ -686,7 +686,7 @@ function Header() {
             <div className="mt-6 pt-4 border-t border-gray-700">
               <button
                 onClick={handleLogout}
-                className="w-full text-left flex items-center gap-3 px-2 py-3 text-lg text-red-400 hover:text-red-300"
+                className="w-full justify-end flex  items-center gap-3 px-2 py-3 text-lg text-red-400 hover:text-red-300 "
               >
                 <FontAwesomeIcon icon={faSignOutAlt} className="w-5" />
                 <span>Đăng xuất</span>
