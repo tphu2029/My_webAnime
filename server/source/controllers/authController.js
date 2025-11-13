@@ -5,7 +5,7 @@ import e from "express";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
-const ACCESS_TOKEN_TTL = "30m";
+const ACCESS_TOKEN_TTL = "15m";
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000; //14day
 
 export const signUp = async (req, res) => {
@@ -75,6 +75,7 @@ export const signIn = async (req, res) => {
       refreshToken,
       expireAt: new Date(Date.now() + REFRESH_TOKEN_TTL), // 14 days
     });
+
     // return refresh token in cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -97,7 +98,7 @@ export const signOut = async (req, res) => {
     const token = req.cookies?.refreshToken;
 
     if (token) {
-      // delete session from session
+      // delete refreshToken from session
       await Session.findOneAndDelete({ refreshToken: token });
 
       // delete cookie

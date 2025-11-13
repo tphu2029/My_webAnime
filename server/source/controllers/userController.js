@@ -62,7 +62,6 @@ export const updateProfile = async (req, res) => {
     const userId = req.user._id;
 
     // Tìm user và cập nhật
-    // { new: true } để nó trả về user *sau* khi đã cập nhật
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {

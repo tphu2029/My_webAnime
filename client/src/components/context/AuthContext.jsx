@@ -17,8 +17,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem("accessToken") || null
   );
   const [loginModalRequired, setLoginModalRequired] = useState(false);
-  // ĐÃ XÓA isLoading
-
   useEffect(() => {
     if (accessToken) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
