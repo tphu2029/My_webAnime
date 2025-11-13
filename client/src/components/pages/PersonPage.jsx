@@ -530,7 +530,7 @@ export default function PersonPage() {
         </div>
       </aside>
 
-      {/* Nội dung chính: RENDER CÓ ĐIỀU KIỆN */}
+      {/* Nội dung chính */}
       <main className="flex-1 p-4 sm:p-8 overflow-y-auto w-full pb-20 lg:pb-8">
         <h2 className="text-2xl font-bold mb-6">{pageTitle}</h2>
 

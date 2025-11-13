@@ -192,8 +192,6 @@ const MovieDetailPage = () => {
             <h2 className="text-xl font-semibold mt-4 mb-2">Nội dung</h2>
             <p className="text-gray-300 leading-relaxed">{movie.overview}</p>
 
-            {/* === PHẦN AI ĐÃ BỊ XÓA === */}
-
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               {director && (
                 <div>

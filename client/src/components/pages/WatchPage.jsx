@@ -30,7 +30,7 @@ const WatchPage = () => {
       setLoading(true);
       setError(null);
       try {
-        // Bước 1: Gọi API thông tin phim (luôn là tiếng Việt)
+        //  Gọi API thông tin phim (luôn là tiếng Việt)
         const movieResponse = await fetch(
           `https://api.themoviedb.org/3/${mediaType}/${id}?language=vi-VN`,
           options
@@ -39,7 +39,7 @@ const WatchPage = () => {
         const movieData = await movieResponse.json();
         setMovie(movieData);
 
-        // Bước 2: Hàm helper để tìm key video
+        //  Hàm helper để tìm key video
         const findTrailer = (data) => {
           const officialTrailer = data.results.find(
             (vid) =>
@@ -61,7 +61,7 @@ const WatchPage = () => {
           );
         };
 
-        // Bước 3: Ưu tiên gọi API video tiếng Nhật (ja-JP)
+        //  Ưu tiên gọi API video tiếng Nhật (ja-JP)
         let videoResponse = await fetch(
           `https://api.themoviedb.org/3/${mediaType}/${id}/videos?language=ja-JP`,
           options
@@ -69,7 +69,7 @@ const WatchPage = () => {
         let videoData = await videoResponse.json();
         let foundKey = findTrailer(videoData);
 
-        // Bước 4: Nếu không tìm thấy tiếng Nhật (!foundKey),
+        //  Nếu không tìm thấy tiếng Nhật (!foundKey),
         // gọi lại API video tiếng Anh (en-US) làm dự phòng
         if (!foundKey) {
           videoResponse = await fetch(
@@ -122,9 +122,8 @@ const WatchPage = () => {
   }
 
   return (
-    // Đây là trang bình thường, không còn là modal
     <div className="container mx-auto max-w-6xl p-4 md:p-8 text-white">
-      {/* ===== 1. PHẦN PLAYER Ở TRÊN ===== */}
+      {/* ===== PLAYER Ở TRÊN ===== */}
       <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden shadow-2xl mb-6">
         {trailerKey ? (
           <YouTube
@@ -139,7 +138,7 @@ const WatchPage = () => {
         )}
       </div>
 
-      {/* ===== 2. PHẦN THÔNG TIN Ở DƯỚI ===== */}
+      {/* ===== PHẦN THÔNG TIN Ở DƯỚI ===== */}
       <div className="bg-gray-800 p-4 md:p-6 rounded-lg">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">{title}</h1>
         {movie.tagline && (
@@ -181,7 +180,7 @@ const WatchPage = () => {
         </p>
       </div>
 
-      {/* (Giả lập) Bạn có thể thêm phần chọn server/tập ở đây nếu muốn */}
+      {/* */}
     </div>
   );
 };
