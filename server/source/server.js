@@ -4,6 +4,7 @@ import { connectDB } from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
+import animeRoute from "./routes/animeRoute.js";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
 dotenv.config();
@@ -16,13 +17,16 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://ro-anime.vercel.app"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://ro-anime.vercel.app"],
     credentials: true,
   })
 );
 
 // public route
 app.use("/api/auth", authRoute);
+
+// anime routes (public + protected)
+app.use("/api/anime", animeRoute);
 
 // private route
 app.use(protectedRoute);
