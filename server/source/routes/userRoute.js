@@ -1,4 +1,5 @@
 import e from "express";
+// Import các controller functions
 import {
   authMe,
   toggleFavorite,
@@ -6,14 +7,20 @@ import {
   updateProfile,
 } from "../controllers/userController.js";
 
+// Tạo router instance
 const router = e.Router();
 
-// lay thong tin
+// Route GET /user/me - Lấy thông tin user hiện tại
 router.get("/me", authMe);
 
-// them/xoa muc yeu thich
+// Route PUT /user/favorites - Thêm/xóa phim khỏi danh sách yêu thích
 router.put("/favorites", toggleFavorite);
 
-router.put("/profile", updateProfile); // Để cập nhật thông tin
-router.put("/password", updatePassword); // Để đổi mật khẩu
+// Route PUT /user/profile - Cập nhật thông tin profile (displayName, phone, bio)
+router.put("/profile", updateProfile);
+
+// Route PUT /user/password - Đổi mật khẩu
+router.put("/password", updatePassword);
+
+// Export router để sử dụng trong app chính
 export default router;

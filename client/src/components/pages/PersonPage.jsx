@@ -92,26 +92,9 @@ export default function PersonPage() {
       }
       setLoading(false);
     } else if (path.includes("xem-tiep")) {
-      // --- LẤY DỮ LIỆU "XEM TIẾP" (API) ---
-      const url = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&page=2`;
-      fetchTmdbData(url)
-        .then((apiMovies) => {
-          const continueWatchingMovies = apiMovies
-            .slice(0, 10)
-            .map((movie) => ({
-              id: movie.id,
-              title: movie.name || movie.title,
-              poster: `${IMAGE_BASE_URL}${movie.poster_path}`,
-              subtitle: `Tập ${Math.floor(Math.random() * 10) + 1}`,
-              mediaType: "tv",
-              originalPosterPath: movie.poster_path,
-              progress: `${Math.floor(Math.random() * 15) + 5}/24 p`,
-            }));
-          setMovies(continueWatchingMovies);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      // --- "XEM TIẾP" - HIỆN TẠI TRỐNG ---
+      setMovies([]);
+      setLoading(false);
     } else {
       // --- TRANG TÀI KHOẢN hoặc DANH SÁCH ---
       setMovies([]);
@@ -425,9 +408,13 @@ export default function PersonPage() {
 
               <div className="flex items-center space-x-2 mb-4">
                 <Link
-                  to={`/${movie.mediaType}/${movie.id}/trailer`}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 px-3 
-                                 bg-yellow-500 text-black font-semibold rounded-lg 
+                  to={
+                    movie.seasonNumber && movie.episodeNumber
+                      ? `/tv/${movie.id}/season/${movie.seasonNumber}/episode/${movie.episodeNumber}`
+                      : `/${movie.mediaType}/${movie.id}/trailer`
+                  }
+                  className="flex-1 flex items-center justify-center gap-2 py-2 px-3
+                                 bg-yellow-500 text-black font-semibold rounded-lg
                                  hover:bg-yellow-400 transition-colors"
                   title="Xem ngay"
                 >
@@ -463,8 +450,8 @@ export default function PersonPage() {
               <button
                 onClick={(e) => handleRemoveFavorite(e, movie)}
                 className="
-                  absolute top-2 right-2 w-7 h-7 bg-black/70 text-white 
-                  rounded-full flex items-center justify-center 
+                  absolute top-2 right-2 w-7 h-7 bg-black/70 text-white
+                  rounded-full flex items-center justify-center
                   opacity-0 lg:group-hover:opacity-100 transition hover:bg-red-600 lg:flex
                 "
                 title="Xóa khỏi Yêu thích"

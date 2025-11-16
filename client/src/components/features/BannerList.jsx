@@ -10,7 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-// --- TMDB CONFIGURATION ---
+// --- TMDB CONFIG ---
 const API_URL = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&without_genres=10751,35&page=1`;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
 const apiKey = import.meta.env.VITE_API_KEY;

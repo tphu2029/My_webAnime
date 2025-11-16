@@ -18,7 +18,7 @@ function App() {
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
-    // Hẹn giờ để tắt loading sau 1.5 giây
+    // Hẹn giờ để tắt loading sau 2 giây
     const timer = setTimeout(() => {
       setIsPageLoading(false);
     }, 2000);
@@ -56,6 +56,12 @@ function App() {
             <Route path="/tv/:tvId" element={<MovieDetailPage />} />
             <Route path="/movie/:movieId/trailer" element={<WatchPage />} />
             <Route path="/tv/:tvId/trailer" element={<WatchPage />} />
+
+            {/* Chi tiết cho từng tập TV */}
+            <Route
+              path="/tv/:tvId/season/:seasonNumber/episode/:episodeNumber"
+              element={<WatchPage />}
+            />
 
             {/* Dùng chung PersonPage */}
             <Route path="/tai-khoan" element={<PersonPage type="account" />} />
