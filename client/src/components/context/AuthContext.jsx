@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-// Cấu hình base URL cho tất cả axios requests
 axios.defaults.baseURL = "/api";
 
 // Tạo Context để share auth state across components

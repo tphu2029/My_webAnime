@@ -4,7 +4,6 @@ import { connectDB } from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
-import animeRoute from "./routes/animeRoute.js";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
 dotenv.config();

@@ -59,11 +59,11 @@ const MovieCard = ({ movie }) => {
     <div className="group relative w-full cursor-pointer overflow-hidden rounded-lg bg-gray-900 shadow-md transition-transform duration-300 hover:scale-105">
       {/* Container chính của card, dùng aspect-ratio [2/3] */}
       <div className="aspect-2/3">
-        {/* ===  VÙNG LINK CHO MOBILE === */}
-        {/* Link này bao trọn thẻ, hiển thị poster, và BIẾN MẤT trên desktop (lg:hidden) */}
+        {/* ===  MOBILE === */}
+        {/* Link này bao trọn thẻ, hiển thị poster, và BIẾN MẤT trên desktop  */}
         <Link
           to={`/${mediaType}/${movie.id}`}
-          className="absolute inset-0 lg:hidden" // Chỉ hoạt động trên mobile
+          className="absolute inset-0 lg:hidden"
         >
           <img
             src={`${IMAGE_BASE_URL}${movie.poster_path}`}
@@ -73,7 +73,7 @@ const MovieCard = ({ movie }) => {
           <div className="absolute inset-0 bg-black/10"></div>
         </Link>
 
-        {/* ===  VÙNG POSTER CHO DESKTOP (KHÔNG CÓ LINK) === */}
+        {/* ===  VÙNG POSTER CHO DESKTOP === */}
         {/* Vùng này chỉ để hiển thị, sẽ bị che bởi hover zone khi hover */}
         <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0 hidden lg:block">
           {" "}
@@ -115,7 +115,7 @@ const MovieCard = ({ movie }) => {
 
             {/* Các nút bấm */}
             <div className="flex items-center space-x-2">
-              {/* Nút Play (đã sửa) */}
+              {/* Nút Play */}
               <Link
                 to={`/${mediaType}/${movie.id}/trailer`}
                 className="flex flex-1"

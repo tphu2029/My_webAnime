@@ -5,12 +5,10 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import YouTube from "react-youtube";
 import EpisodeSelector from "../ui/EpisodeSelector";
 
-// Lấy cấu hình API từ environment variables
 const VITE_API_KEY = import.meta.env.VITE_API_KEY;
 const VITE_IMG_URL = import.meta.env.VITE_IMG_URL;
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
-// Cấu hình options cho fetch API
 const options = {
   method: "GET",
   headers: {
@@ -57,11 +55,41 @@ const WatchPage = () => {
 
         // ===== LẤY YOUTUBE TRAILER ID =====
         if (movieData.videos?.results?.length > 0) {
+          console.log("📹 Videos từ TMDB:", movieData.videos.results);
+
+          // Ưu tiên: Trailer > Teaser > Clip > Opening > Ending
           const trailer = movieData.videos.results.find(
             (v) => v.type === "Trailer" && v.site === "YouTube"
           );
-          if (trailer) {
-            setYoutubeTrailerId(trailer.key);
+
+          const teaser = movieData.videos.results.find(
+            (v) => v.type === "Teaser" && v.site === "YouTube"
+          );
+
+          const clip = movieData.videos.results.find(
+            (v) => v.type === "Clip" && v.site === "YouTube"
+          );
+
+          const opening = movieData.videos.results.find(
+            (v) => v.type === "Opening" && v.site === "YouTube"
+          );
+
+          const youtubeVideo = trailer || teaser || clip || opening;
+
+          if (youtubeVideo) {
+            setYoutubeTrailerId(youtubeVideo.key);
+            console.log(
+              `✅ YouTube Video tìm thấy (${youtubeVideo.type}):`,
+              youtubeVideo.key
+            );
+          } else {
+            console.warn("⚠️ Không tìm thấy YouTube video nào");
+            console.log(
+              "Các loại video có sẵn:",
+              movieData.videos.results
+                .map((v) => `${v.type} (${v.site})`)
+                .join(", ")
+            );
           }
         }
 
@@ -86,7 +114,6 @@ const WatchPage = () => {
             const epNumber = parseInt(episodeNumber);
             const seasonNum = parseInt(seasonNumber);
 
-            // VidSrc URL format: https://vidsrc.to/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}
             const vidsrcLink = `https://vidsrc.to/embed/tv/${id}/${seasonNum}/${epNumber}`;
             setVidsrcUrl(vidsrcLink);
 
@@ -101,7 +128,6 @@ const WatchPage = () => {
           // ===== NẾU LÀ PHIM, TẠO VIDSRC URL CHO PHIM =====
           setLoadingStream(true);
           try {
-            // VidSrc URL format cho phim: https://vidsrc.to/embed/movie/{tmdbId}
             const vidsrcLink = `https://vidsrc.to/embed/movie/${id}`;
             setVidsrcUrl(vidsrcLink);
 
@@ -193,7 +219,9 @@ const WatchPage = () => {
           <div className="flex h-full w-full items-center justify-center">
             <div className="text-center">
               <p className="text-2xl mb-2">😔</p>
-              <p className="text-xl">Không tìm thấy video cho tập/phim này.</p>
+              <p className="text-xl">
+                Không tìm thấy video cho trailer/tập này.
+              </p>
               <p className="text-sm text-gray-400 mt-2">
                 Thử tập khác hoặc phim khác
               </p>
@@ -205,32 +233,15 @@ const WatchPage = () => {
       {/* ===== BADGE NGUỒN VIDEO ===== */}
       <div className="mb-4 flex items-center gap-2 flex-wrap">
         {isEpisode ? (
-          <>
-            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-              📺 VidSrc
-            </span>
-            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
-              ✓ Tập {episodeNumber}
-            </span>
-          </>
+          <></>
         ) : youtubeTrailerId ? (
           <>
-            <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-              ▶️ YouTube
-            </span>
             <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
-              ✓ Trailer chính thức
+              Trailer chính thức
             </span>
           </>
         ) : vidsrcUrl ? (
-          <>
-            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-              📺 VidSrc
-            </span>
-            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
-              ✓ Phim đầy đủ
-            </span>
-          </>
+          <></>
         ) : null}
       </div>
 

@@ -24,7 +24,7 @@ function App() {
 
     // Xóa hẹn giờ khi component bị unmount
     return () => clearTimeout(timer);
-  }, []); // Mảng rỗng [] đảm bảo code này CHỈ CHẠY 1 LẦN
+  }, []);
 
   return (
     // Bọc AuthProvider bên ngoài cùng
@@ -32,7 +32,7 @@ function App() {
       <BrowserRouter>
         <Toaster position="bottom-right" richColors />
 
-        {/* Hiển thị overlay dựa trên state của App.jsx */}
+        {/* overlay  */}
         {isPageLoading && <LoadingOverlay />}
 
         <ScrollToTop />

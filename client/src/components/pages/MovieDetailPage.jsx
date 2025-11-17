@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faPlay } from "@fortawesome/free-solid-svg-icons";
 import EpisodeSelector from "../ui/EpisodeSelector";
 
-// Lấy cấu hình API từ environment variables
 const VITE_API_KEY = import.meta.env.VITE_API_KEY;
 const VITE_IMG_URL = import.meta.env.VITE_IMG_URL;
 

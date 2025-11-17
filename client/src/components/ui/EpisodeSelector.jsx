@@ -1,8 +1,6 @@
-// Import các thư viện cần thiết
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-// Lấy config từ environment variables
 const VITE_IMG_URL = import.meta.env.VITE_IMG_URL;
 const VITE_API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -36,11 +34,10 @@ const EpisodeSelector = ({ tvId, currentSeason, currentEpisode, movie }) => {
 
   /**
    * Effect: Load danh sách seasons từ movie object
-   * Lọc bỏ season 0 (specials/bonus) nếu không cần
    */
   useEffect(() => {
     if (movie && movie.seasons) {
-      // Lọc bỏ season 0 (specials)
+      // Lọc bỏ season 0
       const filteredSeasons = movie.seasons.filter((s) => s.season_number > 0);
       setSeasons(filteredSeasons);
     }
@@ -90,8 +87,8 @@ const EpisodeSelector = ({ tvId, currentSeason, currentEpisode, movie }) => {
                 onClick={() => setSelectedSeason(season.season_number)}
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   selectedSeason === season.season_number
-                    ? "bg-red-600 text-white" // Mùa đang chọn: màu đỏ
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600" // Mùa khác: màu xám
+                    ? "bg-red-600 text-white"
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
               >
                 Mùa {season.season_number}
@@ -110,7 +107,7 @@ const EpisodeSelector = ({ tvId, currentSeason, currentEpisode, movie }) => {
       {loadingEpisodes ? (
         <p>Đang tải danh sách tập...</p>
       ) : episodes.length > 0 ? (
-        // Grid layout cho danh sách episodes
+        // Grid layout cho các tập
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-4 max-h-[600px] overflow-y-auto">
           {episodes.map((episode) => {
             // Kiểm tra xem episode này có đang được xem không
@@ -125,8 +122,8 @@ const EpisodeSelector = ({ tvId, currentSeason, currentEpisode, movie }) => {
                 to={`/tv/${tvId}/season/${episode.season_number}/episode/${episode.episode_number}`}
                 className={`block p-3 rounded-lg transition-colors ${
                   isWatching
-                    ? "bg-red-800/90 ring-2 ring-red-500" // Tập đang xem: highlight đỏ
-                    : "bg-gray-800 hover:bg-gray-700" // Tập khác: màu xám
+                    ? "bg-red-800/90 ring-2 ring-red-500"
+                    : "bg-gray-800 hover:bg-gray-700"
                 }`}
               >
                 <div className="flex flex-col gap-3">
@@ -134,10 +131,10 @@ const EpisodeSelector = ({ tvId, currentSeason, currentEpisode, movie }) => {
                   <img
                     src={
                       episode.still_path
-                        ? `${VITE_IMG_URL}${episode.still_path}` // Ưu tiên ảnh của episode
+                        ? `${VITE_IMG_URL}${episode.still_path}`
                         : movie.backdrop_path
-                        ? `${VITE_IMG_URL}${movie.backdrop_path}` // Fallback: backdrop của show
-                        : "/placeholder.jpg" // Fallback cuối: placeholder
+                        ? `${VITE_IMG_URL}${movie.backdrop_path}`
+                        : "/placeholder.jpg"
                     }
                     alt={`Hình ảnh tập ${episode.episode_number}`}
                     className="w-full rounded aspect-video object-cover"
