@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import YouTube from "react-youtube";
 import EpisodeSelector from "../ui/EpisodeSelector";
-import HLSPlayer from "../ui/HLSPlayer";
 
 // Lấy cấu hình API từ environment variables
 const VITE_API_KEY = import.meta.env.VITE_API_KEY;
@@ -19,16 +19,9 @@ const options = {
   },
 };
 
-/**
- * Component WatchPage
- * Trang xem phim/tập phim với Consumet API
- * Sử dụng GoGoAnime cho anime (audio tiếng Nhật)
- */
 const WatchPage = () => {
-  // Lấy params từ URL (movieId hoặc tvId + seasonNumber + episodeNumber)
   const { movieId, tvId, seasonNumber, episodeNumber } = useParams();
 
-  // Xác định ID và loại media
   const id = movieId || tvId;
   const mediaType = movieId ? "movie" : "tv";
   const isEpisode = mediaType === "tv" && seasonNumber && episodeNumber;
@@ -40,37 +33,39 @@ const WatchPage = () => {
   const [episodeDetails, setEpisodeDetails] = useState(null);
 
   // State cho streaming
-  const [streamData, setStreamData] = useState(null);
+  const [youtubeTrailerId, setYoutubeTrailerId] = useState(null);
+  const [vidsrcUrl, setVidsrcUrl] = useState(null);
   const [loadingStream, setLoadingStream] = useState(false);
-  const [isAnime, setIsAnime] = useState(false);
 
-  /**
-   * Effect: Fetch data khi component mount hoặc khi URL params thay đổi
-   */
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       setEpisodeDetails(null);
-      setStreamData(null);
+      setYoutubeTrailerId(null);
+      setVidsrcUrl(null);
 
       try {
         // ===== GỌI API THÔNG TIN PHIM =====
         const movieResponse = await fetch(
-          `https://api.themoviedb.org/3/${mediaType}/${id}?language=vi-VN`,
+          `https://api.themoviedb.org/3/${mediaType}/${id}?language=vi-VN&append_to_response=videos`,
           options
         );
         if (!movieResponse.ok) throw new Error("Không thể tải thông tin phim.");
         const movieData = await movieResponse.json();
         setMovie(movieData);
 
-        // Kiểm tra xem có phải anime không
-        const animeGenre = movieData.genres?.some(
-          (genre) => genre.id === 16 || genre.name === "Animation"
-        );
-        setIsAnime(animeGenre);
+        // ===== LẤY YOUTUBE TRAILER ID =====
+        if (movieData.videos?.results?.length > 0) {
+          const trailer = movieData.videos.results.find(
+            (v) => v.type === "Trailer" && v.site === "YouTube"
+          );
+          if (trailer) {
+            setYoutubeTrailerId(trailer.key);
+          }
+        }
 
-        // ===== NẾU LÀ TẬP TV, LẤY THÔNG TIN TẬP =====
+        // ===== NẾU LÀ TẬP TV, LẤY THÔNG TIN TẬP VÀ VIDSRC URL =====
         if (isEpisode) {
           try {
             const episodeResponse = await fetch(
@@ -85,40 +80,34 @@ const WatchPage = () => {
             console.error("Lỗi khi fetch tập:", epError);
           }
 
-          // ===== LẤY STREAM TỪ BACKEND (BYPASS CORS) =====
+          // ===== TẠO VIDSRC URL =====
           setLoadingStream(true);
           try {
             const epNumber = parseInt(episodeNumber);
-            const title = movieData.name || movieData.title;
+            const seasonNum = parseInt(seasonNumber);
 
-            console.log(`🎬 Lấy stream từ backend: ${title} - Tập ${epNumber}`);
+            // VidSrc URL format: https://vidsrc.to/embed/tv/{tmdbId}/{seasonNumber}/{episodeNumber}
+            const vidsrcLink = `https://vidsrc.to/embed/tv/${id}/${seasonNum}/${epNumber}`;
+            setVidsrcUrl(vidsrcLink);
 
-            // Gọi backend proxy endpoint
-            const streamResponse = await fetch(
-              `${VITE_API_URL}/api/anime/stream/${id}?` +
-                new URLSearchParams({
-                  mediaType: mediaType,
-                  seasonNumber: seasonNumber,
-                  episodeNumber: epNumber.toString(),
-                  title: title,
-                })
-            );
-
-            if (streamResponse.ok) {
-              const result = await streamResponse.json();
-              if (result.success && result.data.stream) {
-                setStreamData(result.data.stream);
-                console.log(`✅ Tìm thấy stream từ backend (${result.data.gogoAnimeId})`);
-              } else {
-                console.warn("⚠️ Không tìm thấy stream");
-                setError("Không tìm thấy video cho tập này.");
-              }
-            } else {
-              console.error("❌ Lỗi từ backend:", streamResponse.status);
-              setError("Không thể tải video từ server.");
-            }
+            console.log(`✅ VidSrc URL được tạo: ${vidsrcLink}`);
           } catch (streamError) {
-            console.error("❌ Lỗi khi fetch stream:", streamError);
+            console.error("❌ Lỗi khi tạo VidSrc URL:", streamError);
+            setError("Lỗi khi tải video.");
+          } finally {
+            setLoadingStream(false);
+          }
+        } else if (mediaType === "movie") {
+          // ===== NẾU LÀ PHIM, TẠO VIDSRC URL CHO PHIM =====
+          setLoadingStream(true);
+          try {
+            // VidSrc URL format cho phim: https://vidsrc.to/embed/movie/{tmdbId}
+            const vidsrcLink = `https://vidsrc.to/embed/movie/${id}`;
+            setVidsrcUrl(vidsrcLink);
+
+            console.log(`✅ VidSrc URL được tạo: ${vidsrcLink}`);
+          } catch (streamError) {
+            console.error("❌ Lỗi khi tạo VidSrc URL:", streamError);
             setError("Lỗi khi tải video.");
           } finally {
             setLoadingStream(false);
@@ -141,12 +130,15 @@ const WatchPage = () => {
     4
   );
 
-  // Lấy video URL từ stream data
-  let videoUrl = null;
-  if (streamData && streamData.sources && streamData.sources.length > 0) {
-    const defaultSource = streamData.sources.find((s) => s.quality === "default");
-    videoUrl = defaultSource?.url || streamData.sources[0]?.url;
-  }
+  // ===== YOUTUBE PLAYER OPTIONS =====
+  const youtubeOpts = {
+    height: "100%",
+    width: "100%",
+    playerVars: {
+      autoplay: 0,
+      controls: 1,
+    },
+  };
 
   // ===== RENDER STATES =====
   if (loading) {
@@ -174,19 +166,36 @@ const WatchPage = () => {
               <p className="text-xl">Đang tải video...</p>
             </div>
           </div>
-        ) : videoUrl ? (
-          <HLSPlayer
-            src={videoUrl}
-            title={title}
-            poster={movie.backdrop_path ? `${VITE_IMG_URL}${movie.backdrop_path}` : null}
+        ) : isEpisode && vidsrcUrl ? (
+          // ===== VIDSRC IFRAME CHO TẬP =====
+          <iframe
+            src={vidsrcUrl}
+            className="w-full h-full border-0"
+            allowFullScreen={true}
+            title="VidSrc Player"
+          />
+        ) : youtubeTrailerId && !isEpisode ? (
+          // ===== YOUTUBE PLAYER CHO TRAILER PHIM =====
+          <YouTube
+            videoId={youtubeTrailerId}
+            opts={youtubeOpts}
+            className="w-full h-full"
+          />
+        ) : vidsrcUrl && mediaType === "movie" ? (
+          // ===== VIDSRC IFRAME CHO PHIM =====
+          <iframe
+            src={vidsrcUrl}
+            className="w-full h-full border-0"
+            allowFullScreen={true}
+            title="VidSrc Player"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <div className="text-center">
               <p className="text-2xl mb-2">😔</p>
-              <p className="text-xl">Không tìm thấy video cho tập này.</p>
+              <p className="text-xl">Không tìm thấy video cho tập/phim này.</p>
               <p className="text-sm text-gray-400 mt-2">
-                Thử tập khác hoặc anime khác
+                Thử tập khác hoặc phim khác
               </p>
             </div>
           </div>
@@ -194,21 +203,36 @@ const WatchPage = () => {
       </div>
 
       {/* ===== BADGE NGUỒN VIDEO ===== */}
-      {isAnime && streamData && (
-        <div className="mb-4 flex items-center gap-2 flex-wrap">
-          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-            🎌 Audio tiếng Nhật
-          </span>
-          <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
-            ✓ GoGoAnime
-          </span>
-          {streamData.sources && streamData.sources.length > 1 && (
-            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-              {streamData.sources.length} chất lượng khả dụng
+      <div className="mb-4 flex items-center gap-2 flex-wrap">
+        {isEpisode ? (
+          <>
+            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              📺 VidSrc
             </span>
-          )}
-        </div>
-      )}
+            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+              ✓ Tập {episodeNumber}
+            </span>
+          </>
+        ) : youtubeTrailerId ? (
+          <>
+            <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              ▶️ YouTube
+            </span>
+            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+              ✓ Trailer chính thức
+            </span>
+          </>
+        ) : vidsrcUrl ? (
+          <>
+            <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              📺 VidSrc
+            </span>
+            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+              ✓ Phim đầy đủ
+            </span>
+          </>
+        ) : null}
+      </div>
 
       {/* ===== THÔNG TIN PHIM ===== */}
       <div className="bg-gray-800 p-4 md:p-6 rounded-lg">

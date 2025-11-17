@@ -1,5 +1,4 @@
-// client/src/App.jsx
-import React, { useState, useEffect } from "react"; // <--- THÊM useState, useEffect
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import HomePage from "./components/pages/HomePage";
