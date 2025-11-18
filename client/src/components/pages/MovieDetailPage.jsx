@@ -3,6 +3,7 @@ import { useParams, useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faPlay } from "@fortawesome/free-solid-svg-icons";
 import EpisodeSelector from "../ui/EpisodeSelector";
+import CommentSection from "../features/CommentSection";
 
 const VITE_API_KEY = import.meta.env.VITE_API_KEY;
 const VITE_IMG_URL = import.meta.env.VITE_IMG_URL;
@@ -280,6 +281,8 @@ const MovieDetailPage = () => {
             </div>
           </div>
         </div>
+        
+        <CommentSection mediaType={mediaType} mediaId={id} />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import YouTube from "react-youtube";
 import EpisodeSelector from "../ui/EpisodeSelector";
+import CommentSection from "../features/CommentSection";
 
 const VITE_API_KEY = import.meta.env.VITE_API_KEY;
 const VITE_IMG_URL = import.meta.env.VITE_IMG_URL;
@@ -313,6 +314,8 @@ const WatchPage = () => {
           movie={movie}
         />
       )}
+
+      <CommentSection mediaType={mediaType} mediaId={id} />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
+import commentRoute from "./routes/commentRoute.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
@@ -27,6 +28,7 @@ app.use(
 
 // public route
 app.use("/api/auth", authRoute);
+app.use("/api/comments", commentRoute);
 
 // private route
 app.use(protectedRoute);
