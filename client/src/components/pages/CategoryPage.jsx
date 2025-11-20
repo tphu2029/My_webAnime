@@ -146,7 +146,7 @@ const CategoryPage = () => {
         ref={listRef}
         className="mb-8 text-3xl font-bold text-white md:text-4xl"
       >
-        <span className="text-yellow-400">{title}</span>
+        <span className="text-white">{title}</span>
       </h1>
 
       {error && <p className="text-center text-red-500">{error}</p>}

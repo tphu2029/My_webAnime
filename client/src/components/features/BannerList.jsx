@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 // --- TMDB CONFIG ---
-const API_URL = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=popularity.desc&with_genres=16&without_genres=10751,35&page=1`;
+const API_URL = `https://api.themoviedb.org/3/discover/tv?language=vi-VN&sort_by=vote_average.desc&vote_count.gte=500&with_genres=16&with_original_language=ja&page=1`;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
 const apiKey = import.meta.env.VITE_API_KEY;
 const options = {
@@ -57,7 +57,7 @@ const BannerList = () => {
         const result = await response.json();
         const filteredResults = result.results
           .filter((item) => item.backdrop_path && item.poster_path)
-          .slice(0, 5);
+          .slice(0, 7);
         setTopAnime(filteredResults);
       } catch (err) {
         setError(
@@ -117,7 +117,8 @@ const BannerList = () => {
               />
               {/* Lớp phủ */}
               <div className="absolute inset-0 z-10 bg-black opacity-20" />
-              <div className="absolute inset-0 z-20 bg-linear-to-r from-gray-950/70 via-transparent to-transparent" />
+
+              <div className="absolute bottom-0 left-0 right-0 z-20 h-40 bg-linear-to-t from-black via-black/60 to-transparent" />
 
               {/* Container nội dung */}
               <div className="relative z-30 flex h-full flex-col items-start justify-center p-6 md:p-10 lg:p-20">

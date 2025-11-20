@@ -29,7 +29,7 @@ const ExpandableAnimeRow = ({ title, movies = [] }) => {
   return (
     <section className="mb-8 px-4 md:mb-12 md:px-5">
       {title && (
-        <h2 className="mb-4 ml-2 text-2xl font-extrabold text-yellow-400 md:mb-6 lg:text-3xl">
+        <h2 className="mb-4 ml-2 text-2xl font-extrabold text-white md:mb-6 lg:text-3xl">
           {title}
         </h2>
       )}
