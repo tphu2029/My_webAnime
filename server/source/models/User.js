@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema(
       lowercase: true, // Tự động chuyển thành chữ thường
       unique: true, // Đảm bảo không trùng lặp
     },
+    role: {
+      type: String,
+      enum: ["user", "admin"], // Chỉ chấp nhận 'user' hoặc 'admin'
+      default: "user", // Mặc định khi đăng ký là 'user'
+    },
     // Mật khẩu đã được hash (bắt buộc)
     hashedPassword: { type: String, required: true },
     // Email (unique, chữ thường, bắt buộc)

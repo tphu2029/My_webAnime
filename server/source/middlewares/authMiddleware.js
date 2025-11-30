@@ -45,3 +45,16 @@ export const protectedRoute = async (req, res, next) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+// Middleware để kiểm tra quyền admin
+export const authorizeAdmin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    // Nếu là admin thì cho qua
+    next();
+  } else {
+    // Nếu không phải admin
+    return res
+      .status(403)
+      .json({ message: "Access denied. Admin rights required." });
+  }
+};

@@ -10,12 +10,15 @@ import {
   faPlay,
   faInfoCircle,
   faCamera,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 
-// --- Cấu hình API (cho tab Xem tiếp) ---
+// --- Cấu hình API TMDB ---
+
 const apiKey = import.meta.env.VITE_API_KEY;
 const options = {
   method: "GET",
@@ -34,8 +37,12 @@ export default function PersonPage() {
   const { authUser, toggleFavorite, updateUserProfile, updateUserPassword } =
     useAuth();
 
-  //State cho trang Tài khoản
-  const [activeTab, setActiveTab] = useState("info"); // 'info' hoặc 'password'
+  // --- STATE CHO QUẢN LÝ USER ---
+  const [userList, setUserList] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+
+  // --- State cho trang Tài khoản ---
+  const [activeTab, setActiveTab] = useState("info"); // 'info', 'password', hoặc 'users'
   const [formData, setFormData] = useState({
     displayName: "",
     phone: "",
@@ -58,21 +65,10 @@ export default function PersonPage() {
     return "Quản lý tài khoản";
   })();
 
+  // Logic Fetch dữ liệu dựa trên URL (Phim, Yêu thích...) ---
   useEffect(() => {
     setLoading(true);
     const path = location.pathname;
-
-    const fetchTmdbData = async (url) => {
-      try {
-        const res = await fetch(url, options);
-        if (!res.ok) throw new Error("Lỗi khi fetch API");
-        const data = await res.json();
-        return data.results || [];
-      } catch (err) {
-        console.error(err);
-        return [];
-      }
-    };
 
     if (path.includes("yeu-thich")) {
       // --- LẤY DỮ LIỆU YÊU THÍCH ---
@@ -92,13 +88,14 @@ export default function PersonPage() {
       }
       setLoading(false);
     } else if (path.includes("xem-tiep")) {
-      // --- "XEM TIẾP" - HIỆN TẠI TRỐNG ---
+      // --- "XEM TIẾP" ---
       setMovies([]);
       setLoading(false);
     } else {
       // --- TRANG TÀI KHOẢN hoặc DANH SÁCH ---
       setMovies([]);
       setLoading(false);
+      // Điền dữ liệu vào form khi vào trang tài khoản
       if (path.includes("tai-khoan") && authUser) {
         setFormData({
           displayName: authUser.displayName || "",
@@ -109,7 +106,38 @@ export default function PersonPage() {
     }
   }, [location.pathname, authUser]);
 
-  // Các hàm cho form Tài khoản
+  //  Xử lý riêng cho Tab Quản lý User ---
+  useEffect(() => {
+    if (activeTab !== "users" || authUser?.role !== "admin") return;
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("Bạn chưa đăng nhập hoặc token đã hết hạn!");
+      return;
+    }
+
+    setUsersLoading(true);
+
+    axios
+      .get("http://localhost:5001/api/user/list", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setUserList(Array.isArray(res.data) ? res.data : res.data.users || []);
+      })
+      .catch((err) => {
+        console.error("Lỗi lấy user:", err);
+        toast.error(
+          err.response?.data?.message || "Không thể tải danh sách người dùng"
+        );
+      })
+      .finally(() => {
+        setUsersLoading(false);
+      });
+  }, [activeTab, authUser]);
+
+  // Các hàm xử lý form (Tài khoản/Mật khẩu)
   const handleInfoChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -125,9 +153,7 @@ export default function PersonPage() {
     setInfoLoading(true);
     setInfoError(null);
     try {
-      // Gọi hàm từ context
       await updateUserProfile(formData);
-      // Toast.success đã được gọi bên trong context
     } catch (err) {
       setInfoError(err.message || "Lỗi không xác định");
       toast.error(err.message || "Lỗi không xác định");
@@ -145,12 +171,10 @@ export default function PersonPage() {
     setPassLoading(true);
     setPassError(null);
     try {
-      // Gọi hàm từ context
       await updateUserPassword({
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword,
       });
-      // Toast.success đã được gọi bên trong context
       setPasswordData({
         oldPassword: "",
         newPassword: "",
@@ -164,7 +188,6 @@ export default function PersonPage() {
     }
   };
 
-  // Hàm xóa yêu thích (cho tab Yêu thích)
   const handleRemoveFavorite = (e, movie) => {
     e.preventDefault();
     e.stopPropagation();
@@ -176,21 +199,127 @@ export default function PersonPage() {
     });
   };
 
-  // --- Menu Sidebar ---
+  // --- Menu Sidebar  ---
   const menu = [
+    { to: "/tai-khoan", label: "Tài khoản", icon: faUser },
     { to: "/yeu-thich", label: "Yêu thích", icon: faHeart },
     { to: "/danh-sach", label: "Danh sách", icon: faPlus },
     { to: "/xem-tiep", label: "Xem tiếp", icon: faClockRotateLeft },
-    { to: "/tai-khoan", label: "Tài khoản", icon: faUser },
   ];
+
+  // --- Render Component: Bảng Quản Lý User ---
+  const renderUserManagement = () => {
+    // Kiểm tra: Nếu không có user hoặc role không phải admin thì không render gì cả (return null)
+    if (!authUser || authUser.role !== "admin") {
+      return null;
+    }
+
+    return (
+      <div className="bg-[#1c1c1c] rounded-lg p-4 overflow-hidden mt-6">
+        <div className="overflow-x-auto">
+          {usersLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <p className="text-gray-400 animate-pulse">
+                Đang tải danh sách người dùng...
+              </p>
+            </div>
+          ) : (
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="text-gray-400 border-b border-gray-700 text-sm uppercase tracking-wider">
+                  <th className="p-4">Người dùng</th>
+                  <th className="p-4">Email</th>
+                  <th className="p-4">Quyền</th>
+                  <th className="p-4 text-right">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-200 divide-y divide-gray-800">
+                {userList.length > 0 ? (
+                  userList.map((user, index) => (
+                    <tr
+                      key={user._id || index}
+                      className="hover:bg-white/5 transition-colors"
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border border-gray-600">
+                            {user.avatarUrl ? (
+                              <img
+                                src={user.avatarUrl}
+                                alt={user.username}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <FontAwesomeIcon
+                                icon={faUser}
+                                className="text-gray-400 text-sm"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-white">
+                              {user.username}
+                            </p>
+                            <p className="text-xs text-gray-500 hidden sm:block">
+                              ID: {user._id}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 text-gray-400 text-sm">
+                        {user.email}
+                      </td>
+                      <td className="p-4">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            user.role === "admin"
+                              ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                              : "bg-green-500/10 text-green-400 border border-green-500/20"
+                          }`}
+                        >
+                          {user.role ? user.role.toUpperCase() : "USER"}
+                        </span>
+                      </td>
+                      <td className="p-4 text-right">
+                        <button
+                          className="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-all"
+                          onClick={() =>
+                            toast.info(
+                              `Chức năng xóa user ${user.username} đang phát triển`
+                            )
+                          }
+                          title="Xóa người dùng"
+                        >
+                          <FontAwesomeIcon icon={faX} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="p-8 text-center text-gray-500 italic"
+                    >
+                      Không tìm thấy người dùng nào.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   const renderAccountPage = () => (
     <div className="max-w-4xl mx-auto">
       {/* --- Tabs --- */}
-      <div className="flex border-b border-gray-700 mb-8">
+      <div className="flex border-b border-gray-700 mb-8 overflow-x-auto">
         <button
           onClick={() => setActiveTab("info")}
-          className={`py-3 px-6 font-semibold transition-colors ${
+          className={`py-3 px-6 font-semibold transition-colors whitespace-nowrap ${
             activeTab === "info"
               ? "border-b-2 border-yellow-500 text-white"
               : "text-gray-400 hover:text-white"
@@ -200,7 +329,7 @@ export default function PersonPage() {
         </button>
         <button
           onClick={() => setActiveTab("password")}
-          className={`py-3 px-6 font-semibold transition-colors ${
+          className={`py-3 px-6 font-semibold transition-colors whitespace-nowrap ${
             activeTab === "password"
               ? "border-b-2 border-yellow-500 text-white"
               : "text-gray-400 hover:text-white"
@@ -208,13 +337,27 @@ export default function PersonPage() {
         >
           Đổi mật khẩu
         </button>
+
+        {/* Tab Quản lý User - Chỉ hiện với Admin */}
+        {authUser?.role === "admin" && (
+          <button
+            onClick={() => setActiveTab("users")}
+            className={`py-3 px-6 font-semibold transition-colors whitespace-nowrap flex items-center gap-2 ${
+              activeTab === "users"
+                ? "border-b-2 border-yellow-500 text-white"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <FontAwesomeIcon icon={faUsers} />
+            Quản lý User
+          </button>
+        )}
       </div>
 
       {/* --- Nội dung Tab --- */}
       {activeTab === "info" && (
         <form onSubmit={handleInfoSubmit}>
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Cột Avatar */}
             <div className="shrink-0 flex flex-col items-center gap-4 w-full lg:w-48">
               {authUser?.avatarUrl ? (
                 <img
@@ -239,7 +382,6 @@ export default function PersonPage() {
               </button>
             </div>
 
-            {/* Cột Thông tin */}
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -369,6 +511,11 @@ export default function PersonPage() {
           </div>
         </form>
       )}
+
+      {/* Render Bảng User khi activeTab là users */}
+      {activeTab === "users" &&
+        authUser?.role === "admin" &&
+        renderUserManagement()}
     </div>
   );
 
@@ -382,7 +529,6 @@ export default function PersonPage() {
             key={movie.id}
             className="group relative w-full cursor-pointer overflow-hidden rounded-lg transition-transform duration-300 lg:hover:scale-105"
           >
-            {/* Ảnh Poster chính (luôn hiển thị) */}
             <Link to={`/${movie.mediaType}/${movie.id}`}>
               <img
                 src={movie.poster}
@@ -391,7 +537,6 @@ export default function PersonPage() {
               />
             </Link>
 
-            {/* Phần chi tiết khi HOVER (Ẩn trên Mobile, chỉ hiện trên Desktop) */}
             <div
               className="
                 absolute inset-0 flex-col overflow-hidden bg-black/80 text-white
@@ -445,7 +590,6 @@ export default function PersonPage() {
               )}
             </div>
 
-            {/* Nút Xóa (Chỉ hiện ở tab Yêu thích) */}
             {location.pathname.includes("yeu-thich") && (
               <button
                 onClick={(e) => handleRemoveFavorite(e, movie)}
@@ -460,7 +604,6 @@ export default function PersonPage() {
               </button>
             )}
 
-            {/* Text bên dưới (Chỉ trên mobile/tablet) */}
             <div className="mt-2 text-sm lg:hidden">
               {movie.progress && (
                 <div className="h-1 bg-gray-600 rounded overflow-hidden">
@@ -490,6 +633,7 @@ export default function PersonPage() {
         </p>
       </div>
     );
+
   return (
     <div className="flex min-h-screen bg-[#121212] text-white">
       {/* Sidebar */}
@@ -521,11 +665,13 @@ export default function PersonPage() {
       <main className="flex-1 p-4 sm:p-8 overflow-y-auto w-full pb-20 lg:pb-8">
         <h2 className="text-2xl font-bold mb-6">{pageTitle}</h2>
 
-        {
-          location.pathname.includes("tai-khoan")
-            ? renderAccountPage() // Hiển thị form tài khoản
-            : renderMovieGrid() // Hiển thị lưới phim
-        }
+        {(() => {
+          if (location.pathname.includes("tai-khoan")) {
+            return renderAccountPage();
+          } else {
+            return renderMovieGrid();
+          }
+        })()}
       </main>
 
       {/* Footer Menu Mobile */}

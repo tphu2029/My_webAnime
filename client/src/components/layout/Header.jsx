@@ -18,6 +18,7 @@ import {
 import logo from "../../assets/img/logo.png";
 import LoginModal from "../ui/LoginModal";
 import { useAuth } from "../context/AuthContext.jsx";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 function Header() {
   const [isGenreOpen, setIsGenreOpen] = useState(false);
@@ -35,7 +36,7 @@ function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   //lấy authUse, logout, các hàm modal từ context
-  const { authUser, logout, loginModalRequired, clearLoginRequirement } =
+  const { user, authUser, logout, loginModalRequired, clearLoginRequirement } =
     useAuth();
 
   const ANIME_GENRES = [

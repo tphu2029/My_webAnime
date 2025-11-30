@@ -7,8 +7,6 @@ import EpisodeSelector from "../ui/EpisodeSelector";
 import CommentSection from "../features/CommentSection";
 
 const VITE_API_KEY = import.meta.env.VITE_API_KEY;
-const VITE_IMG_URL = import.meta.env.VITE_IMG_URL;
-const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 const options = {
   method: "GET",
@@ -45,57 +43,44 @@ const WatchPage = () => {
       setVidsrcUrl(null);
 
       try {
-        // ===== GỌI API THÔNG TIN PHIM =====
-        const movieResponse = await fetch(
-          `https://api.themoviedb.org/3/${mediaType}/${id}?language=vi-VN&append_to_response=videos`,
-          options
-        );
-        if (!movieResponse.ok) throw new Error("Không thể tải thông tin phim.");
-        const movieData = await movieResponse.json();
+        const [detailReq, videoReq] = await Promise.all([
+          fetch(
+            `https://api.themoviedb.org/3/${mediaType}/${id}?language=vi-VN`,
+            options
+          ),
+          fetch(
+            `https://api.themoviedb.org/3/${mediaType}/${id}/videos`,
+            options
+          ),
+        ]);
+
+        if (!detailReq.ok) throw new Error("Không thể tải thông tin phim.");
+
+        const movieData = await detailReq.json();
+        const videoData = await videoReq.json();
+
+        movieData.videos = videoData;
+
         setMovie(movieData);
 
-        // ===== LẤY YOUTUBE TRAILER ID =====
+        // ===== LẤY YOUTUBE TRAILER ID  =====
         if (movieData.videos?.results?.length > 0) {
-          console.log("📹 Videos từ TMDB:", movieData.videos.results);
-
-          // Ưu tiên: Trailer > Teaser > Clip > Opening > Ending
           const trailer = movieData.videos.results.find(
             (v) => v.type === "Trailer" && v.site === "YouTube"
           );
-
           const teaser = movieData.videos.results.find(
             (v) => v.type === "Teaser" && v.site === "YouTube"
           );
 
-          const clip = movieData.videos.results.find(
-            (v) => v.type === "Clip" && v.site === "YouTube"
-          );
-
-          const opening = movieData.videos.results.find(
-            (v) => v.type === "Opening" && v.site === "YouTube"
-          );
-
-          const youtubeVideo = trailer || teaser || clip || opening;
+          const youtubeVideo = trailer || teaser || movieData.videos.results[0];
 
           if (youtubeVideo) {
             setYoutubeTrailerId(youtubeVideo.key);
-            console.log(
-              `✅ YouTube Video tìm thấy (${youtubeVideo.type}):`,
-              youtubeVideo.key
-            );
-          } else {
-            console.warn("⚠️ Không tìm thấy YouTube video nào");
-            console.log(
-              "Các loại video có sẵn:",
-              movieData.videos.results
-                .map((v) => `${v.type} (${v.site})`)
-                .join(", ")
-            );
           }
         }
 
-        // ===== NẾU LÀ TẬP TV, LẤY THÔNG TIN TẬP VÀ VIDSRC URL =====
         if (isEpisode) {
+          // Fetch chi tiết tập phim
           try {
             const episodeResponse = await fetch(
               `https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}/episode/${episodeNumber}?language=vi-VN`,
@@ -107,37 +92,6 @@ const WatchPage = () => {
             }
           } catch (epError) {
             console.error("Lỗi khi fetch tập:", epError);
-          }
-
-          // ===== TẠO VIDSRC URL =====
-          setLoadingStream(true);
-          try {
-            const epNumber = parseInt(episodeNumber);
-            const seasonNum = parseInt(seasonNumber);
-
-            const vidsrcLink = `https://vidsrc.to/embed/tv/${id}/${seasonNum}/${epNumber}`;
-            setVidsrcUrl(vidsrcLink);
-
-            console.log(`✅ VidSrc URL được tạo: ${vidsrcLink}`);
-          } catch (streamError) {
-            console.error("❌ Lỗi khi tạo VidSrc URL:", streamError);
-            setError("Lỗi khi tải video.");
-          } finally {
-            setLoadingStream(false);
-          }
-        } else if (mediaType === "movie") {
-          // ===== NẾU LÀ PHIM, TẠO VIDSRC URL CHO PHIM =====
-          setLoadingStream(true);
-          try {
-            const vidsrcLink = `https://vidsrc.to/embed/movie/${id}`;
-            setVidsrcUrl(vidsrcLink);
-
-            console.log(`✅ VidSrc URL được tạo: ${vidsrcLink}`);
-          } catch (streamError) {
-            console.error("❌ Lỗi khi tạo VidSrc URL:", streamError);
-            setError("Lỗi khi tải video.");
-          } finally {
-            setLoadingStream(false);
           }
         }
       } catch (err) {
@@ -194,22 +148,19 @@ const WatchPage = () => {
             </div>
           </div>
         ) : isEpisode && vidsrcUrl ? (
-          // ===== VIDSRC IFRAME CHO TẬP =====
           <iframe
             src={vidsrcUrl}
             className="w-full h-full border-0"
             allowFullScreen={true}
             title="VidSrc Player"
           />
-        ) : youtubeTrailerId && !isEpisode ? (
-          // ===== YOUTUBE PLAYER CHO TRAILER PHIM =====
+        ) : youtubeTrailerId ? (
           <YouTube
             videoId={youtubeTrailerId}
             opts={youtubeOpts}
             className="w-full h-full"
           />
         ) : vidsrcUrl && mediaType === "movie" ? (
-          // ===== VIDSRC IFRAME CHO PHIM =====
           <iframe
             src={vidsrcUrl}
             className="w-full h-full border-0"
@@ -221,10 +172,7 @@ const WatchPage = () => {
             <div className="text-center">
               <p className="text-2xl mb-2">😔</p>
               <p className="text-xl">
-                Không tìm thấy video cho trailer/tập này.
-              </p>
-              <p className="text-sm text-gray-400 mt-2">
-                Thử tập khác hoặc phim khác
+                Không tìm thấy video (Trailer) cho tập này.
               </p>
             </div>
           </div>
@@ -233,22 +181,15 @@ const WatchPage = () => {
 
       {/* ===== BADGE NGUỒN VIDEO ===== */}
       <div className="mb-4 flex items-center gap-2 flex-wrap">
-        {isEpisode ? (
-          <></>
-        ) : youtubeTrailerId ? (
-          <>
-            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
-              Trailer chính thức
-            </span>
-          </>
-        ) : vidsrcUrl ? (
-          <></>
+        {youtubeTrailerId ? (
+          <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+            Trailer chính thức (TV Show)
+          </span>
         ) : null}
       </div>
 
       {/* ===== THÔNG TIN PHIM ===== */}
       <div className="bg-gray-800 p-4 md:p-6 rounded-lg">
-        {/* Tiêu đề */}
         {isEpisode && episodeDetails ? (
           <>
             <h3 className="text-lg text-red-400 font-semibold">{title}</h3>
@@ -260,12 +201,10 @@ const WatchPage = () => {
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{title}</h1>
         )}
 
-        {/* Tagline */}
         {movie.tagline && (
           <p className="text-gray-400 italic text-sm mb-4">{movie.tagline}</p>
         )}
 
-        {/* Rating và năm */}
         <div className="flex items-center flex-wrap gap-4 mb-4">
           <div className="flex items-center space-x-2">
             <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
@@ -284,7 +223,6 @@ const WatchPage = () => {
           )}
         </div>
 
-        {/* Thể loại */}
         <div className="flex flex-wrap gap-2 mb-4">
           {movie.genres.map((genre) => (
             <span
@@ -296,7 +234,6 @@ const WatchPage = () => {
           ))}
         </div>
 
-        {/* Nội dung */}
         <h2 className="text-xl font-semibold mt-6 mb-2">Nội dung</h2>
         <p className="text-gray-300 leading-relaxed text-sm">
           {isEpisode && episodeDetails?.overview

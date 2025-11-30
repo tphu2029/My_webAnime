@@ -140,3 +140,18 @@ export const updatePassword = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+export const getAllUsers = async (req, res) => {
+  try {
+    // Lấy tất cả user, sắp xếp theo ngày tạo mới nhất
+    // .select("-hashedPassword") để không trả về mật khẩu
+    const users = await User.find()
+      .select("-hashedPassword")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ users });
+  } catch (error) {
+    console.error("getAllUsers error:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

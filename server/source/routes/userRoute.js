@@ -5,7 +5,13 @@ import {
   toggleFavorite,
   updatePassword,
   updateProfile,
+  getAllUsers,
 } from "../controllers/userController.js";
+
+import {
+  protectedRoute,
+  authorizeAdmin,
+} from "../middlewares/authMiddleware.js";
 
 // Tạo router instance
 const router = e.Router();
@@ -22,5 +28,6 @@ router.put("/profile", updateProfile);
 // Route PUT /user/password - Đổi mật khẩu
 router.put("/password", updatePassword);
 
-// Export router để sử dụng trong app chính
+// Route GET /user/list - Lấy danh sách tất cả user (chỉ admin mới được phép)
+router.get("/list", protectedRoute, authorizeAdmin, getAllUsers);
 export default router;
