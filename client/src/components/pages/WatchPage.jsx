@@ -147,33 +147,17 @@ const WatchPage = () => {
               <p className="text-xl">Đang tải video...</p>
             </div>
           </div>
-        ) : isEpisode && vidsrcUrl ? (
-          <iframe
-            src={vidsrcUrl}
-            className="w-full h-full border-0"
-            allowFullScreen={true}
-            title="VidSrc Player"
-          />
         ) : youtubeTrailerId ? (
           <YouTube
             videoId={youtubeTrailerId}
             opts={youtubeOpts}
             className="w-full h-full"
           />
-        ) : vidsrcUrl && mediaType === "movie" ? (
-          <iframe
-            src={vidsrcUrl}
-            className="w-full h-full border-0"
-            allowFullScreen={true}
-            title="VidSrc Player"
-          />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <div className="text-center">
               <p className="text-2xl mb-2">😔</p>
-              <p className="text-xl">
-                Không tìm thấy video (Trailer) cho tập này.
-              </p>
+              <p className="text-xl">Không tìm thấy video cho tập này.</p>
             </div>
           </div>
         )}
